@@ -1,0 +1,442 @@
+/* ===== Global ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", Arial, sans-serif;
+  line-height: 1.7;
+  background: #f5f8ff;
+  color: #333;
+}
+
+/* ===== Header ===== */
+header {
+  background: #1e3a8a;
+  color: #fff;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+header .logo {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+header nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+header nav a:hover {
+  color: #facc15;
+}
+
+/* ===== Hero ===== */
+.hero {
+  background: url('cuci.png') no-repeat center/cover;
+  color: white;
+  text-align: center;
+  padding: 120px 20px;
+  position: relative;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 50, 0.6);
+}
+
+.hero h1,
+.hero p,
+.hero a {
+  position: relative;
+  z-index: 1;
+}
+
+.hero h1 {
+  font-size: 5rem;   /* besar default */
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.hero p {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 25px;
+  background: #2563eb;
+  color: white;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: all 0.3s;
+}
+
+.btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+/* ===== Section ===== */
+.section {
+  padding: 70px 20px;
+  text-align: center;
+}
+
+.section h2 {
+  font-size: 32px;
+  margin-bottom: 30px;
+  color: #1e3a8a;
+  position: relative;
+}
+
+.section h2::after {
+  content: "";
+  width: 60px;
+  height: 4px;
+  background: #2563eb;
+  display: block;
+  margin: 10px auto 0;
+  border-radius: 2px;
+}
+
+/* ===== Pricelist ===== */
+.pricelist-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.pricelist-images img {
+  width: 300px;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  transition: 0.3s;
+}
+
+.pricelist-images img:hover {
+  transform: scale(1.05);
+}
+
+/* ===== PRICE CALCULATOR ===== */
+#calculator.section {
+  background: #eef2ff;
+  max-width: 1000px;
+  margin: auto;
+  border-radius: 12px;
+  padding: 50px 30px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+#calculator h2 {
+  font-size: 20px;
+  margin-bottom: 30px;
+  color: #1e3a8a;
+  position: relative;
+}
+
+#calculator h2::after {
+  content: "";
+  width: 60px;
+  height: 4px;
+  background: #2563eb;
+  display: block;
+  margin: 10px auto 0;
+  border-radius: 2px;
+}
+
+.calc-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.calc-box {
+  background: #f9f9ff;
+  padding: 25px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  text-align: left;
+  border-left: 6px solid #2563eb;
+  margin: 20px;
+}
+
+.calc-box h3 {
+  color: #1e3a8a;
+  margin-bottom: 15px;
+  font-size: 20px;
+  border-bottom: 2px solid #eef2ff;
+  padding-bottom: 8px;
+}
+
+.service-option {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 15px;
+  align-items: center;
+  margin: 12px 0;
+  font-size: 16px;
+}
+
+.service-option label {
+  font-size: 16px;
+  color: #333;
+}
+
+.service-option input[type="number"] {
+  width: 80px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 15px;
+}
+
+.total-box {
+  margin-top: 30px;
+  padding: 20px;
+  background: #eef2ff;
+  border-radius: 10px;
+  display: inline-block;
+  font-weight: bold;
+  font-size: 20px;
+  color: #1e3a8a;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+
+/* ===== Tips & Trik ===== */
+#tips {
+  background: #eef2ff;
+  text-align: left;
+  max-width: 1000px;
+  margin: auto;
+  border-radius: 12px;
+  padding: 40px;
+}
+
+#tips h2 {
+  text-align: center;
+}
+
+#tips h3 {
+  margin-top: 30px;
+  color: #1e3a8a;
+}
+
+.tips-block {
+  background: #fff;
+  border-left: 6px solid #2563eb;
+  padding: 20px 25px;
+  margin: 20px 0;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.tips-block ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.promo {
+  margin-top: 12px;
+  font-style: italic;
+  color: #444;
+}
+
+.tagline {
+  margin-top: 35px;
+  padding: 20px;
+  background: linear-gradient(90deg, #2563eb, #1e3a8a);
+  color: white;
+  text-align: center;
+  border-radius: 10px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* ===== Gallery ===== */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.gallery-item {
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+
+.gallery-item:hover {
+  transform: translateY(-5px);
+}
+
+.gallery-item img {
+  width: 100%;
+  border-radius: 10px;
+  margin: 5px 0;
+  transition: transform 0.3s;
+}
+
+.gallery-item img:hover {
+  transform: scale(1.05);
+}
+
+/* ===== Contact ===== */
+.contact {
+  background: #fff;
+  padding: 50px 20px;
+  border-radius: 12px;
+  max-width: 1000px;
+  margin: auto;
+  border-left: 6px solid #2563eb;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+.contact p {
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+/* ===== Footer ===== */
+footer {
+  background: #1e3a8a;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  margin-top: 40px;
+  font-size: 14px;
+}
+
+/* ===== RESPONSIVE SCALING (Laptop & HP sama) ===== */
+@media (max-width: 1024px) {
+  .hero h1 { font-size: 3rem; }
+  .hero p { font-size: 18px; }
+  .section h2 { font-size: 28px; }
+  .calc-box { padding: 20px; }
+}
+
+@media (max-width: 768px) {
+  /* Navbar tetap horizontal & rapi */
+  header { flex-wrap: wrap; justify-content: center; }
+  header nav { flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+  /* Hero */
+  .hero { padding: 60px 15px; }
+  .hero h1 { font-size: 2.2rem; }
+  .hero p { font-size: 16px; }
+
+  /* Kalkulator tetap grid menyamping */
+  .calc-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+  }
+
+  /* Pricelist tetap 2 kolom */
+  .pricelist-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    justify-content: center;
+  }
+
+  .pricelist-images img {
+    width: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+
+  /* Gallery tetap grid menyamping */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+  }
+
+  .service-option label { font-size: 15px; }
+  .service-option input { font-size: 14px; }
+}
+
+@media (max-width: 480px) {
+  header .logo { font-size: 20px; }
+  header nav a { font-size: 8px;  }
+
+  .hero { padding: 50px 10px; }
+  .hero h1 { font-size: 1.8rem; line-height: 1.2; }
+  .hero p { font-size: 14px; }
+
+  .btn { padding: 8px 14px; font-size: 13px; }
+
+  .section h2 { font-size: 20px; }
+
+  /* Pricelist tetap 2 kolom kecil */
+  .pricelist-images {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .pricelist-images img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Gallery tetap 2 kolom */
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  /* Kalkulator lebih kecil & seimbang */
+  .calc-box { 
+    padding: 10px; 
+    font-size: 12px; 
+  }
+
+  .service-option label { font-size: 13px; }
+  .service-option input { 
+    font-size: 12px; 
+    max-width: 90px; 
+    padding: 4px 6px;
+  }
+
+  .total-box { 
+    font-size: 14px; 
+    padding: 10px; 
+  }
+
+  .tips-block { padding: 10px; font-size: 13px; }
+  .contact p { font-size: 13px; }
+}
