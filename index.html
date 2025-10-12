@@ -1,238 +1,229 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WashLabs.ind | Jasa Cuci Sepatu, Helm & Topi Terbaik</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WashLabs.ind | Premium Shoe, Helmet & Cap Care</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <nav>
-      <a href="#home">Home</a>
-      <a href="#pricelist">Pricelist</a>
-      <a href="#calculator">Kalkulator Harga</a>
-      <a href="#tips">Tips & Trik</a>
-      <a href="#gallery">Gallery</a>
-      <a href="#contact">Kontak</a>
-    </nav>
-  </header>
+  <!-- ========== HEADER ========== -->
 
-  <!-- Hero -->
-  <section id="home" class="hero">
-    <h1>WASHLABS</h1>
-    <p>Jasa Cuci Sepatu, Helm & Topi Terpercaya !</p>
-    <a href="#contact" class="btn">Hubungi Kami</a>
-  </section>
 
-  <!-- Pricelist -->
-  <section id="pricelist" class="section">
-    <h2>Pricelist</h2>
-    <div class="pricelist-images">
-      <img src="priclist.jpg" alt="Pricelist WashLabs 1">
-      <img src="pricelistb2.jpg" alt="Pricelist WashLabs 2">
-    </div>
-  </section>
+ <header class="header">
+  <nav class="navbar">
+    <div class="logo">WASHLABS.<span>INDONESIA</span></div>
+    <button class="menu-btn" id="menu-toggle">☰</button>
 
-<!-- Kalkulator Harga -->
-<!-- Kalkulator Harga -->
-<section id="calculator" class="section">
-  <form id="priceForm">
-  <h2>Estimasi Harga</h2>
-    <!-- Topi -->
-    <div class="calc-box">
-      <h3>🧢 Topi</h3>
-      <div class="service-option">
-        <label>Cleaning Topi (Rp15.000)</label>
-        <input type="number" name="topi_clean" min="0" value="0">
-      </div>
-      <div class="service-option">
-        <label>Retouch Color + Cleaning (Rp50.000)</label>
-        <input type="number" name="topi_retouch" min="0" value="0">
-      </div>
-    </div>
-
-    <!-- Helm -->
-    <div class="calc-box">
-      <h3>🪖 Helm</h3>
-      <div class="service-option">
-        <label>Cleaning Helm (Rp30.000)</label>
-        <input type="number" name="helm_clean" min="0" value="0">
-      </div>
-      <div class="service-option">
-        <label>Detailing Helm (Half Face) (Rp50.000)</label>
-        <input type="number" name="helm_half" min="0" value="0">
-      </div>
-      <div class="service-option">
-        <label>Detailing Helm (Full Face) (Rp60.000)</label>
-        <input type="number" name="helm_full" min="0" value="0">
-      </div>
-    </div>
-
-    <!-- Sepatu -->
-    <div class="calc-box">
-      <h3>👟 Sepatu</h3>
-      <div class="service-option">
-        <label>Cleaning (Canvas/Kulit) (Rp25.000)</label>
-        <input type="number" name="shoes_canvas" min="0" value="0">
-      </div>
-      <div class="service-option">
-        <label>Cleaning + Perawatan Suede (Full Suede) (Rp50.000)</label>
-        <input type="number" name="shoes_suede_full" min="0" value="0">
-      </div>
-      <div class="service-option">
-        <label>Cleaning + Perawatan Suede (50% Suede) (Rp35.000)</label>
-        <input type="number" name="shoes_suede_half" min="0" value="0">
-      </div>
-      <div class="service-option">
-        <label>Unyellowing + Cleaning (Rp50.000)</label>
-        <input type="number" name="shoes_unyellow" min="0" value="0">
-      </div>
-      <div class="service-option">
-        <label>Retouch Color + Cleaning (Rp70.000)</label>
-        <input type="number" name="shoes_retouch" min="0" value="0">
-      </div>
-    </div>
-
-    <!-- Total -->
-    <div class="total-box">
-      <h3>Total: <span id="totalPrice">Rp0</span></h3>
-    </div>
-
-  </form>
-</section>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#pricelist">Pricelist</a></li>
+      <li><a href="#calculator">Kalkulator</a></li>
+      <li><a href="#tips">Tips</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#contact">Kontak</a></li>
+      <li><button class="theme-toggle" id="theme-toggle">🌙</button></li>
+    </ul>
+  </nav>
+</header>
 
 <script>
-  // Harga sesuai pricelist
-  const prices = {
-    topi_clean: 15000,
-    topi_retouch: 50000,
-    helm_clean: 30000,
-    helm_half: 50000,
-    helm_full: 60000,
-    shoes_canvas: 25000,
-    shoes_suede_full: 50000,
-    shoes_suede_half: 35000,
-    shoes_unyellow: 50000,
-    shoes_retouch: 70000
-  };
-
-  const form = document.getElementById("priceForm");
-  const totalPrice = document.getElementById("totalPrice");
-
-  form.addEventListener("input", () => {
-    let total = 0;
-    for (let key in prices) {
-      const qty = parseInt(form[key].value) || 0;
-      total += qty * prices[key];
-    }
-    totalPrice.textContent = "Rp" + total.toLocaleString("id-ID");
+  const menuBtn = document.getElementById('menu-toggle');
+  const navLinks = document.getElementById('nav-links');
+  menuBtn.addEventListener('click', () => {
+    navLinks.classList.toggle('active');
   });
 </script>
 
-  <!-- Tips & Trik -->
-  <section id="tips" class="section">
-    <h2>Tips & Trik Perawatan</h2>
 
-    <h3>🥾 Perawatan Sepatu</h3>
-    <div class="tips-block">
-      <h4>1. Sepatu Canvas</h4>
-      <ul>
-        <li>Hindari dipakai saat hujan atau jalan becek.</li>
-        <li>Gunakan kaus kaki bersih untuk mencegah bau.</li>
-        <li>Setelah dipakai, angin-anginkan sebelum disimpan.</li>
-        <li>Simpan di tempat teduh, jangan ditumpuk dengan sepatu lain.</li>
-      </ul>
-      <p class="promo">👉 Kalau sudah terlalu kusam atau bau, serahkan ke <strong>WashLabs</strong>.</p>
+  <!-- ========== HERO ========== -->
+<section id="home" class="hero">
+  <div class="overlay"></div>
+  <div class="container hero-content">
+    <h1 data-animate>WashLabs.ind</h1>
+    <p data-animate>Karena setiap langkah dan perjalanan Anda pantas tampil bersih. Cuci, rawat, dan segarkan perlengkapan favorit Anda di WashLabs.</p>
+    <a href="#pricelist" class="btn" data-animate>🧾 Lihat Pricelist</a>
+  </div>
+</section>
+
+
+  <!-- ========== PRICELIST ========== -->
+<section id="pricelist" class="section pricelist">
+  <div class="container">
+    <h2 class="section-title">📋 Pricelist Lengkap</h2>
+    <p class="section-subtitle">
+      Layanan cuci & detailing dari WashLabs — hasil bersih, wangi, dan aman untuk semua bahan.
+    </p>
+
+    <div class="pricelist-box">
+      <img src="pricelistb2.jpg" alt="Pricelist Helm & Topi" class="pricelist-img" loading="lazy" />
+      <img src="priclist.jpg" alt="Pricelist Sepatu & Lainnya" class="pricelist-img" loading="lazy" />
     </div>
 
-    <div class="tips-block">
-      <h4>2. Sepatu Kulit</h4>
-      <ul>
-        <li>Hindari sering dipakai di bawah terik matahari.</li>
-        <li>Simpan di tempat kering untuk mencegah jamur.</li>
-        <li>Gunakan shoe tree agar bentuk tetap rapi.</li>
-        <li>Pakai bergantian supaya kulit bisa “beristirahat”.</li>
-      </ul>
-      <p class="promo">👉 Kalau kulit kusam/jamuran, <strong>WashLabs</strong> punya treatment khusus.</p>
+    <div class="note">
+      <p>💡 Harga dapat berubah sewaktu-waktu sesuai kondisi barang dan tingkat kotoran.</p>
     </div>
+  </div>
+</section>
 
-    <div class="tips-block">
-      <h4>3. Sepatu Suede</h4>
-      <ul>
-        <li>Jangan dipakai saat cuaca basah/hujan.</li>
-        <li>Simpan di tempat kering, jangan pakai plastik.</li>
-        <li>Hindari aktivitas berat/debu berlebihan.</li>
-        <li>Gunakan shoe tree atau isi kertas agar bentuk awet.</li>
-      </ul>
-      <p class="promo">👉 Kalau suede belang/pudar, bawa ke <strong>WashLabs</strong> untuk perawatan.</p>
-    </div>
 
-    <h3>🧢 Perawatan Topi</h3>
-    <div class="tips-block">
-      <ul>
-        <li>Jangan dipakai saat rambut basah.</li>
-        <li>Jangan gunakan topi yang sama setiap hari.</li>
-        <li>Simpan di gantungan/rak khusus agar visor tidak bengkok.</li>
-        <li>Hindari sinar matahari langsung terlalu lama.</li>
-      </ul>
-      <p class="promo">👉 Kalau topi bau keringat/kusam, <strong>WashLabs</strong> siap bikin segar lagi.</p>
-    </div>
 
-    <h3>🪖 Perawatan Helm</h3>
-    <div class="tips-block">
-      <ul>
-        <li>Gunakan balaclava/inner agar helm tidak cepat kotor.</li>
-        <li>Jangan taruh helm di atas motor saat parkir di panas terik.</li>
-        <li>Angin-anginkan setelah dipakai agar tidak lembap.</li>
-        <li>Simpan di tempat teduh & gunakan sarung helm.</li>
-      </ul>
-      <p class="promo">👉 Kalau helm bau apek/busa kotor, serahkan ke <strong>WashLabs</strong> untuk deep cleaning.</p>
-    </div>
+  <!-- ========== KALKULATOR ========== -->
+  <section id="calculator" class="section calculator">
+    <div class="container">
+      <h2>💰 Estimasi Harga Cepat</h2>
+      <p>Masukkan jumlah item untuk menghitung estimasi biaya layanan Anda.</p>
 
-    <div class="tagline">
-      <strong>Rawat barang kesayanganmu saat dipakai. Kalau sudah sulit ditangani, tinggal bawa ke WashLabs. Praktis, aman, hasil maksimal!</strong><br>
-      “ANDA PUAS! KAMI TEWAS!”
+      <form id="priceForm" class="price-form">
+        <div class="calc-grid">
+          <div class="calc-box">
+            <h3>👞 Sepatu</h3>
+            <label>Cleaning Canvas/Kulit (Rp25.000)</label>
+            <input type="number" name="shoes_canvas" min="0" value="0" />
+            <label>Cleaning + Suede 50% (Rp35.000)</label>
+            <input type="number" name="shoes_suede_half" min="0" value="0" />
+            <label>Cleaning + Suede Full (Rp50.000)</label>
+            <input type="number" name="shoes_suede_full" min="0" value="0" />
+            <label>Unyellowing + Cleaning (Rp50.000)</label>
+            <input type="number" name="shoes_unyellow" min="0" value="0" />
+            <label>Retouch + Cleaning (Rp70.000)</label>
+            <input type="number" name="shoes_retouch" min="0" value="0" />
+          </div>
+
+          <div class="calc-box">
+            <h3>🪖 Helm</h3>
+            <label>Cleaning (Rp30.000)</label>
+            <input type="number" name="helm_clean" min="0" value="0" />
+            <label>Detailing Half Face (Rp50.000)</label>
+            <input type="number" name="helm_half" min="0" value="0" />
+            <label>Detailing Full Face (Rp60.000)</label>
+            <input type="number" name="helm_full" min="0" value="0" />
+          </div>
+
+          <div class="calc-box">
+            <h3>🧢 Topi</h3>
+            <label>Cleaning (Rp15.000)</label>
+            <input type="number" name="topi_clean" min="0" value="0" />
+            <label>Retouch + Cleaning (Rp50.000)</label>
+            <input type="number" name="topi_retouch" min="0" value="0" />
+          </div>
+        </div>
+
+        <div class="total-box">
+          <h3>Total Estimasi: <span id="totalPrice">Rp0</span></h3>
+        </div>
+      </form>
     </div>
   </section>
 
-  <!-- Gallery -->
-  <section id="gallery" class="section">
-    <h2>Gallery Before & After</h2>
-    <div class="gallery">
-      <div class="gallery-item">
+  <!-- ========== TIPS ========== -->
+<section id="tips" class="section tips">
+  <div class="container">
+    <h2>🧠 Tips & Trik Perawatan Profesional</h2>
+    <p class="subtitle">Panduan perawatan sepatu, tas, topi, dan helm berdasarkan rekomendasi ahli kebersihan & perawatan bahan.</p>
+
+    <div class="tips-grid">
+      <div class="tips-card">
+        <h3>👟 Sepatu Canvas</h3>
+        <p>
+          Gunakan sikat lembut & sabun cair ringan.  
+          Jangan direndam lama agar lem tidak rusak.  
+          Keringkan dengan kipas, bukan sinar matahari langsung.  
+        </p>
+        <small>💡 Rekomendasi ahli: gunakan <b>detergen pH netral</b> seperti produk sneaker cleaner profesional.</small>
+      </div>
+
+      <div class="tips-card">
+        <h3>👞 Sepatu Kulit</h3>
+        <p>
+          Bersihkan dengan kain microfiber lembap.  
+          Gunakan <b>leather conditioner</b> setiap 2–3 minggu.  
+          Hindari air dan panas berlebih agar tidak retak.
+        </p>
+        <small>💡 Tips ahli: gunakan semir berbahan alami & simpan di tempat bersirkulasi udara baik.</small>
+      </div>
+
+      <div class="tips-card">
+        <h3>🥾 Sepatu Suede</h3>
+        <p>
+          Sikat dengan <b>suede brush</b> searah serat.  
+          Gunakan cairan pembersih khusus suede.  
+          Setelah bersih, semprotkan pelindung anti-air.
+        </p>
+        <small>💡 Disarankan oleh pengrajin kulit: hindari air, gunakan <b>protector spray</b> untuk hasil maksimal.</small>
+      </div>
+
+      <div class="tips-card">
+        <h3>👜 Tas</h3>
+        <p>
+          Bersihkan permukaan tas dengan kain lembap.  
+          Hindari penyimpanan di tempat lembap.  
+          Gunakan <b>dust bag</b> saat tidak digunakan.
+        </p>
+        <small>💡 Saran profesional: isi bagian dalam dengan kertas agar bentuk tetap terjaga.</small>
+      </div>
+
+      <div class="tips-card">
+        <h3>🧢 Topi</h3>
+        <p>
+          Gunakan busa lembut & air sabun ringan.  
+          Hindari mencuci di mesin cuci.  
+          Keringkan dengan cara digantung di tempat teduh.
+        </p>
+        <small>💡 Disarankan oleh ahli topi: gunakan <b>hat frame</b> saat pencucian agar bentuk tidak berubah.</small>
+      </div>
+
+      <div class="tips-card">
+        <h3>🪖 Helm</h3>
+        <p>
+          Cuci bagian dalam (busa) tiap 1–2 minggu.  
+          Bersihkan visor dengan kain halus & cairan khusus.  
+          Gunakan <b>inner helm</b> untuk menjaga kebersihan.
+        </p>
+        <small>💡 Rekomendasi bengkel helm profesional: jangan gunakan bensin/alkohol untuk membersihkan visor.</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- ========== GALLERY ========== -->
+  <section id="gallery" class="section gallery">
+    <div class="container">
+      <h2>📸 Gallery Sebelum & Sesudah</h2>
+      <div class="gallery-grid">
         <img src="before1.jpg" alt="Before">
         <img src="after1.jpg" alt="After">
-      </div>
-      <div class="gallery-item">
         <img src="before2.jpg" alt="Before">
         <img src="after2.jpg" alt="After">
       </div>
-      <div class="gallery-item">
-        <img src="before3.jpg" alt="Before">
-        <img src="after3.jpg" alt="After">
+    </div>
+  </section>
+
+  <!-- ========== KONTAK ========== -->
+  <section id="contact" class="section contact">
+    <div class="container">
+      <h2>📞 Kontak Kami</h2>
+      <p>Hubungi kami untuk layanan terbaik Anda:</p>
+      <div class="contact-buttons">
+        <a href="https://wa.me/6281770070490" class="btn">💬 WhatsApp</a>
+        <a href="https://instagram.com/washlabs.ind" class="btn">📷 Instagram</a>
+        <a href="https://maps.app.goo.gl/NYMZw7D8arMYxjxr7" class="btn">📍 Google Maps</a>
       </div>
     </div>
   </section>
 
-  <!-- Contact -->
- <section id="contact" class="section contact">
-  <h2>Kontak Kami</h2>
-  <p>Ingin order atau tanya-tanya dulu? Hubungi kami:</p>
-
-  <a href="https://wa.me/6281770070490" target="_blank" class="btn">Whatsapp</a>
-  <a href="https://instagram.com/washlabs.ind" target="_blank" class="btn">Instagram</a>
-    <a href="https://maps.app.goo.gl/NYMZw7D8arMYxjxr7" target="_blank" class="btn">Alamat Kami</a>
-
-    </a>
-  </p>
-</section>
-
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 WashLabs.ind. All Rights Reserved.</p>
-    <script src="script.js"></script>
+  <footer class="footer">
+    <p>&copy; 2025 WashLabs.indonesia | Premium shoes, bag & Helmet Care</p>
   </footer>
+
+  <script src="script.js"></script>
+  <!-- Tombol WhatsApp Mengambang -->
+<a href="https://wa.me/6281770070490" class="wa-float" target="_blank" rel="noopener">
+  <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp" />
+</a>
+
 </body>
 </html>
