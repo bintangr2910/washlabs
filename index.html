@@ -162,27 +162,36 @@
     <!-- =========================
        SPIN DISKON
   ========================== -->
-<!-- 🎁 Tombol Mengambang -->
-<button class="spin-open-btn" id="spinOpen">🎁 Spin Diskon</button>
+<!-- Tombol Mengambang -->
+<button id="spinOpen" class="floating-spin-btn">🎁 Spin Diskon</button>
 
-<!-- 🎡 Modal Spin Diskon -->
-<div class="spin-modal" id="spinModal" aria-hidden="true">
-  <div class="spin-backdrop" id="spinBackdrop"></div>
-  <div class="spin-panel">
-    <button class="spin-close" id="closeSpin">✕</button>
-    <h3>Putar & Menangkan Diskon!</h3>
-    <p class="spin-sub">Coba keberuntunganmu — dapatkan kupon potongan eksklusif WashLabs!</p>
-    
-    <div class="wheel-wrap">
-      <div class="wheel" id="wheel"></div>
-      <div class="wheel-pointer"></div>
+<!-- Modal Spin -->
+<div id="spinModal" class="spin-modal">
+  <div id="spinBackdrop" class="spin-backdrop"></div>
+  <div class="spin-content">
+    <button id="closeSpin" class="close-btn">&times;</button>
+    <h2>Putar & Menangkan Diskon!</h2>
+    <p>Coba keberuntunganmu — dapatkan kupon potongan eksklusif WashLabs!</p>
+
+    <div class="wheel-container">
+      <div id="wheel" class="wheel">
+        <div class="segment seg1">5%</div>
+        <div class="segment seg2">10%</div>
+        <div class="segment seg3">15%</div>
+        <div class="segment seg4">20%</div>
+        <div class="segment seg5">25%</div>
+        <div class="segment seg6">30%</div>
+      </div>
+      <div class="pointer"></div>
     </div>
-    
-    <button class="spin-btn" id="spinButton">PUTAR</button>
-    <div class="spin-result" id="resultText"></div>
-    <small class="spin-note">🎯 Satu kali putaran per perangkat.</small>
+
+    <button id="spinButton" class="spin-btn">PUTAR</button>
+    <p id="resultText" class="result-text"></p>
+    <p class="note">🎯 Satu kali putaran per perangkat.</p>
   </div>
 </div>
+
+
 
 
 
