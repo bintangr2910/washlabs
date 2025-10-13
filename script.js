@@ -52,7 +52,7 @@ const wheel = document.getElementById("wheel");
 const spinButton = document.getElementById("spinButton");
 const resultText = document.getElementById("resultText");
 
-// Data sektor (URUT SESUAI SEGMEN DI HTML)
+// Data sektor (URUT SESUAI TAMPILAN KANAN PUTARAN SEARAH JARUM JAM)
 const sectors = ["5%", "10%", "NT", "25%", "15%", "NT"];
 const sectorAngle = 360 / sectors.length;
 
@@ -86,9 +86,9 @@ spinButton.addEventListener("click", () => {
   const randomIndex = Math.floor(Math.random() * sectors.length);
   const selected = sectors[randomIndex];
 
-  // Sudut berhenti (karena pointer di bawah)
-  const stopAngle = 360 - (randomIndex * sectorAngle + sectorAngle / 2);
-  const finalRotation = 360 * 5 + stopAngle;
+  // 🧭 Karena pointer di bawah → putaran arah berlawanan dari urutan sektor
+  const stopAngle = randomIndex * sectorAngle + sectorAngle / 2;
+  const finalRotation = 360 * 5 - stopAngle; // dikurangi agar arah putaran sesuai pointer bawah
 
   wheel.style.transition = "transform 5s ease-out";
   wheel.style.transform = `rotate(${finalRotation}deg)`;
