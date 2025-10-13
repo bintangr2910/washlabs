@@ -53,7 +53,7 @@ const spinButton = document.getElementById("spinButton");
 const resultText = document.getElementById("resultText");
 
 // Data sektor (URUT SESUAI SEGMEN DI HTML)
-const sectors = ["5%", "10%", "NT", "25%", "10%", "NT"];
+const sectors = ["5%", "10%", "NT", "25%", "15%", "NT"];
 const sectorAngle = 360 / sectors.length;
 
 // Cegah spin ulang
