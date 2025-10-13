@@ -1,14 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* =========================
-     MODE GELAP / TERANG
-  ========================== */
-  const themeToggle = document.getElementById("theme-toggle");
-  if (themeToggle) {
-    themeToggle.addEventListener("click", () => {
-      document.body.classList.toggle("light");
-    });
-  }
 
   /* =========================
      MENU MOBILE
