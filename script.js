@@ -1,4 +1,3 @@
-
 /* =========================
    MENU MOBILE
 ========================= */
@@ -53,8 +52,8 @@ const wheel = document.getElementById("wheel");
 const spinButton = document.getElementById("spinButton");
 const resultText = document.getElementById("resultText");
 
-// Data sektor
-const sectors = ["5%", "10%", "15%", "20%", "25%", "30%"];
+// Data sektor (URUT SESUAI SEGMEN DI HTML)
+const sectors = ["5%", "10%", "NT", "25%", "10%", "NT"];
 const sectorAngle = 360 / sectors.length;
 
 // Cegah spin ulang
@@ -71,7 +70,7 @@ const closeModal = () => modal.classList.remove("active");
 closeBtn.addEventListener("click", closeModal);
 backdrop.addEventListener("click", closeModal);
 
-// Saat reload, kalau sudah spin sebelumnya
+// Jika sudah spin sebelumnya
 if (hasSpun) {
   const prevResult = localStorage.getItem("spinResult");
   resultText.textContent = `🎉 Kamu sudah dapat diskon ${prevResult}`;
@@ -87,10 +86,11 @@ spinButton.addEventListener("click", () => {
   const randomIndex = Math.floor(Math.random() * sectors.length);
   const selected = sectors[randomIndex];
 
-  // Sudut berhenti (pointer di bawah)
-  const stopAngle = randomIndex * sectorAngle + sectorAngle / 2;
+  // Sudut berhenti (karena pointer di bawah)
+  const stopAngle = 360 - (randomIndex * sectorAngle + sectorAngle / 2);
   const finalRotation = 360 * 5 + stopAngle;
 
+  wheel.style.transition = "transform 5s ease-out";
   wheel.style.transform = `rotate(${finalRotation}deg)`;
 
   setTimeout(() => {
@@ -102,8 +102,3 @@ spinButton.addEventListener("click", () => {
     isSpinning = false;
   }, 5200);
 });
-
-
-
-
-
