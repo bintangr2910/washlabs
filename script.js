@@ -53,7 +53,7 @@ const spinButton = document.getElementById("spinButton");
 const resultText = document.getElementById("resultText");
 
 // Data sektor (URUT SESUAI TAMPILAN KANAN PUTARAN SEARAH JARUM JAM)
-const sectors = ["5%", "10%", "NT", "25%", "15%", "NT"];
+const sectors = ["5%", "10%", "0%", "25%", "15%", "0%"];
 const sectorAngle = 360 / sectors.length;
 
 // Cegah spin ulang
