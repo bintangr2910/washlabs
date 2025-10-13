@@ -43,7 +43,6 @@ if (form && totalPrice) {
 /* =========================
    SPIN DISKON
 ========================= */
-// Elemen DOM
 const openBtn = document.getElementById("spinOpen");
 const modal = document.getElementById("spinModal");
 const backdrop = document.getElementById("spinBackdrop");
@@ -52,18 +51,15 @@ const wheel = document.getElementById("wheel");
 const spinButton = document.getElementById("spinButton");
 const resultText = document.getElementById("resultText");
 
-// Data sektor (URUT SESUAI TAMPILAN KANAN PUTARAN SEARAH JARUM JAM)
-const sectors = [15%, 0%, 25%, 0%, 10%, 0%];
+// 🧭 Urutan sektor sesuai TAMPILAN roda (arah searah jarum jam dari atas)
+const sectors = ["15%", "0%", "25%", "0%", "10%", "0%"];
 const sectorAngle = 360 / sectors.length;
 
-// Cegah spin ulang
 let isSpinning = false;
 let hasSpun = localStorage.getItem("hasSpun");
 
 // Buka modal
-openBtn.addEventListener("click", () => {
-  modal.classList.add("active");
-});
+openBtn.addEventListener("click", () => modal.classList.add("active"));
 
 // Tutup modal
 const closeModal = () => modal.classList.remove("active");
@@ -86,15 +82,15 @@ spinButton.addEventListener("click", () => {
   const randomIndex = Math.floor(Math.random() * sectors.length);
   const selected = sectors[randomIndex];
 
-  // 🧭 Karena pointer di bawah → putaran arah berlawanan dari urutan sektor
+  // 🧭 Karena pointer di bawah → pakai arah rotasi terbalik
   const stopAngle = randomIndex * sectorAngle + sectorAngle / 2;
-  const finalRotation = 360 * 5 - stopAngle; // dikurangi agar arah putaran sesuai pointer bawah
+  const finalRotation = 360 * 5 - stopAngle;
 
   wheel.style.transition = "transform 5s ease-out";
   wheel.style.transform = `rotate(${finalRotation}deg)`;
 
   setTimeout(() => {
-    resultText.textContent = `🎉 Selamat! Kamu dapat diskon ${selected}`;
+    resultText.textContent = `🎉 Kamu dapat diskon ${selected}`;
     localStorage.setItem("hasSpun", "true");
     localStorage.setItem("spinResult", selected);
     spinButton.disabled = true;
