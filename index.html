@@ -4,45 +4,40 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WashLabs.ind | Premium Shoe, Helmet & Cap Care</title>
-  <link rel="stylesheet" href="style.css" />
+
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <!-- ========== HEADER ========== -->
+  <header class="header">
+    <nav class="navbar">
+      <div class="logo">WASHLABS.<span>INDONESIA</span></div>
 
+      <button class="menu-btn" id="menu-toggle" aria-label="Menu">☰</button>
 
- <header class="header">
-  <nav class="navbar">
-    <div class="logo">WASHLABS.<span>INDONESIA</span></div>
-    <button class="menu-btn" id="menu-toggle">☰</button>
-
-    <ul class="nav-links" id="nav-links">
-      <li><a href="#pricelist">Pricelist</a></li>
-      <li><a href="#calculator">Kalkulator</a></li>
-      <li><a href="#tips">Tips</a></li>
-      <li><a href="#gallery">Gallery</a></li>
-      <li><a href="#contact">Kontak</a></li>
-      <li><button class="theme-toggle" id="theme-toggle">🌙</button></li>
-    </ul>
-  </nav>
-</header>
-
-<script>
-  const menuBtn = document.getElementById('menu-toggle');
-  const navLinks = document.getElementById('nav-links');
-  menuBtn.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
-  });
-</script>
-
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#pricelist">Pricelist</a></li>
+        <li><a href="#calculator">Kalkulator</a></li>
+        <li><a href="#tips">Tips</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#contact">Kontak</a></li>
+        <li><button class="theme-toggle" id="theme-toggle" aria-label="Mode Gelap">🌙</button></li>
+      </ul>
+    </nav>
+  </header>
 
   <!-- ========== HERO ========== -->
 <section id="home" class="hero">
   <div class="overlay"></div>
   <div class="container hero-content">
-    <h1 data-animate>WashLabs.ind</h1>
+    <h1 data-animate>WashLabs.Ind</h1>
     <p data-animate>Karena setiap langkah dan perjalanan Anda pantas tampil bersih. Cuci, rawat, dan segarkan perlengkapan favorit Anda di WashLabs.</p>
     <a href="#pricelist" class="btn" data-animate>🧾 Lihat Pricelist</a>
   </div>
@@ -50,31 +45,29 @@
 
 
   <!-- ========== PRICELIST ========== -->
-<section id="pricelist" class="section pricelist">
-  <div class="container">
-    <h2 class="section-title">📋 Pricelist Lengkap</h2>
-    <p class="section-subtitle">
-      Layanan cuci & detailing dari WashLabs — hasil bersih, wangi, dan aman untuk semua bahan.
-    </p>
+  <section id="pricelist" class="section pricelist">
+    <div class="container">
+      <h2 class="section-title">📋 Pricelist Lengkap</h2>
+      <p class="section-subtitle">
+        Layanan cuci & detailing dari WashLabs — hasil bersih, wangi, dan aman untuk semua bahan.
+      </p>
 
-    <div class="pricelist-box">
-      <img src="pricelistb2.jpg" alt="Pricelist Helm & Topi" class="pricelist-img" loading="lazy" />
-      <img src="priclist.jpg" alt="Pricelist Sepatu & Lainnya" class="pricelist-img" loading="lazy" />
+      <div class="pricelist-box">
+        <img src="pricelistb2.jpg" alt="Pricelist Helm & Topi" class="pricelist-img" loading="lazy" />
+        <img src="priclist.jpg" alt="Pricelist Sepatu & Lainnya" class="pricelist-img" loading="lazy" />
+      </div>
+
+      <div class="note">
+        <p>💡 Harga dapat berubah sewaktu-waktu sesuai kondisi barang dan tingkat kotoran.</p>
+      </div>
     </div>
+  </section>
 
-    <div class="note">
-      <p>💡 Harga dapat berubah sewaktu-waktu sesuai kondisi barang dan tingkat kotoran.</p>
-    </div>
-  </div>
-</section>
-
-
-
-  <!-- ========== KALKULATOR ========== -->
+  <!-- ========== KALKULATOR ESTIMASI ========== -->
   <section id="calculator" class="section calculator">
     <div class="container">
-      <h2>💰 Estimasi Harga Cepat</h2>
-      <p>Masukkan jumlah item untuk menghitung estimasi biaya layanan Anda.</p>
+      <h2 class="section-title">💰 Estimasi Harga Cepat</h2>
+      <p class="section-subtitle">Masukkan jumlah item untuk menghitung estimasi biaya layanan Anda.</p>
 
       <form id="priceForm" class="price-form">
         <div class="calc-grid">
@@ -119,85 +112,87 @@
   </section>
 
   <!-- ========== TIPS ========== -->
-<section id="tips" class="section tips">
-  <div class="container">
-    <h2>🧠 Tips & Trik Perawatan Profesional</h2>
-    <p class="subtitle">Panduan perawatan sepatu, tas, topi, dan helm berdasarkan rekomendasi ahli kebersihan & perawatan bahan.</p>
+  <section id="tips" class="section tips">
+    <div class="container">
+      <h2 class="section-title">🧠 Tips & Trik Perawatan Profesional</h2>
+      <p class="section-subtitle">Panduan perawatan sepatu, tas, topi, dan helm berdasarkan rekomendasi ahli perawatan bahan.</p>
 
-    <div class="tips-grid">
-      <div class="tips-card">
-        <h3>👟 Sepatu Canvas</h3>
-        <p>
-          Gunakan sikat lembut & sabun cair ringan.  
-          Jangan direndam lama agar lem tidak rusak.  
-          Keringkan dengan kipas, bukan sinar matahari langsung.  
-        </p>
-        <small>💡 Rekomendasi ahli: gunakan <b>detergen pH netral</b> seperti produk sneaker cleaner profesional.</small>
-      </div>
+      <div class="tips-grid">
+        <div class="tips-card">
+          <h3>👟 Sepatu Canvas</h3>
+          <p>Gunakan sikat lembut & sabun cair ringan. Jangan direndam lama agar lem tidak rusak. Keringkan dengan kipas, bukan sinar matahari langsung.</p>
+          <small>💡 Gunakan <b>detergen pH netral</b> seperti produk sneaker cleaner profesional.</small>
+        </div>
 
-      <div class="tips-card">
-        <h3>👞 Sepatu Kulit</h3>
-        <p>
-          Bersihkan dengan kain microfiber lembap.  
-          Gunakan <b>leather conditioner</b> setiap 2–3 minggu.  
-          Hindari air dan panas berlebih agar tidak retak.
-        </p>
-        <small>💡 Tips ahli: gunakan semir berbahan alami & simpan di tempat bersirkulasi udara baik.</small>
-      </div>
+        <div class="tips-card">
+          <h3>👞 Sepatu Kulit</h3>
+          <p>Bersihkan dengan kain microfiber lembap. Gunakan <b>leather conditioner</b> setiap 2–3 minggu. Hindari panas berlebih.</p>
+          <small>💡 Gunakan semir alami & simpan di tempat bersirkulasi udara baik.</small>
+        </div>
 
-      <div class="tips-card">
-        <h3>🥾 Sepatu Suede</h3>
-        <p>
-          Sikat dengan <b>suede brush</b> searah serat.  
-          Gunakan cairan pembersih khusus suede.  
-          Setelah bersih, semprotkan pelindung anti-air.
-        </p>
-        <small>💡 Disarankan oleh pengrajin kulit: hindari air, gunakan <b>protector spray</b> untuk hasil maksimal.</small>
-      </div>
+        <div class="tips-card">
+          <h3>🥾 Sepatu Suede</h3>
+          <p>Sikat dengan <b>suede brush</b> searah serat. Gunakan cairan pembersih khusus suede, lalu semprotkan pelindung anti-air.</p>
+          <small>💡 Gunakan <b>protector spray</b> untuk hasil maksimal.</small>
+        </div>
 
-      <div class="tips-card">
-        <h3>👜 Tas</h3>
-        <p>
-          Bersihkan permukaan tas dengan kain lembap.  
-          Hindari penyimpanan di tempat lembap.  
-          Gunakan <b>dust bag</b> saat tidak digunakan.
-        </p>
-        <small>💡 Saran profesional: isi bagian dalam dengan kertas agar bentuk tetap terjaga.</small>
-      </div>
+        <div class="tips-card">
+          <h3>👜 Tas</h3>
+          <p>Bersihkan permukaan dengan kain lembap. Hindari tempat lembap. Gunakan <b>dust bag</b> saat tidak digunakan.</p>
+          <small>💡 Isi bagian dalam dengan kertas agar bentuk tetap terjaga.</small>
+        </div>
 
-      <div class="tips-card">
-        <h3>🧢 Topi</h3>
-        <p>
-          Gunakan busa lembut & air sabun ringan.  
-          Hindari mencuci di mesin cuci.  
-          Keringkan dengan cara digantung di tempat teduh.
-        </p>
-        <small>💡 Disarankan oleh ahli topi: gunakan <b>hat frame</b> saat pencucian agar bentuk tidak berubah.</small>
-      </div>
+        <div class="tips-card">
+          <h3>🧢 Topi</h3>
+          <p>Gunakan busa lembut & air sabun ringan. Hindari mesin cuci. Keringkan di tempat teduh.</p>
+          <small>💡 Gunakan <b>hat frame</b> agar bentuk tetap terjaga.</small>
+        </div>
 
-      <div class="tips-card">
-        <h3>🪖 Helm</h3>
-        <p>
-          Cuci bagian dalam (busa) tiap 1–2 minggu.  
-          Bersihkan visor dengan kain halus & cairan khusus.  
-          Gunakan <b>inner helm</b> untuk menjaga kebersihan.
-        </p>
-        <small>💡 Rekomendasi bengkel helm profesional: jangan gunakan bensin/alkohol untuk membersihkan visor.</small>
+        <div class="tips-card">
+          <h3>🪖 Helm</h3>
+          <p>Cuci bagian dalam tiap 1–2 minggu. Bersihkan visor dengan kain halus. Gunakan <b>inner helm</b> untuk menjaga kebersihan.</p>
+          <small>💡 Jangan gunakan bensin/alkohol untuk membersihkan visor.</small>
+        </div>
       </div>
     </div>
+  </section>
+
+    <!-- =========================
+       SPIN DISKON
+  ========================== -->
+<!-- 🎁 Tombol Mengambang -->
+<button class="spin-open-btn" id="spinOpen">🎁 Spin Diskon</button>
+
+<!-- 🎡 Modal Spin Diskon -->
+<div class="spin-modal" id="spinModal" aria-hidden="true">
+  <div class="spin-backdrop" id="spinBackdrop"></div>
+  <div class="spin-panel">
+    <button class="spin-close" id="closeSpin">✕</button>
+    <h3>Putar & Menangkan Diskon!</h3>
+    <p class="spin-sub">Coba keberuntunganmu — dapatkan kupon potongan eksklusif WashLabs!</p>
+    
+    <div class="wheel-wrap">
+      <div class="wheel" id="wheel"></div>
+      <div class="wheel-pointer"></div>
+    </div>
+    
+    <button class="spin-btn" id="spinButton">PUTAR</button>
+    <div class="spin-result" id="resultText"></div>
+    <small class="spin-note">🎯 Satu kali putaran per perangkat.</small>
   </div>
-</section>
+</div>
+
 
 
   <!-- ========== GALLERY ========== -->
   <section id="gallery" class="section gallery">
     <div class="container">
-      <h2>📸 Gallery Sebelum & Sesudah</h2>
+      <h2 class="section-title">📸 Gallery Sebelum & Sesudah</h2>
       <div class="gallery-grid">
-        <img src="before1.jpg" alt="Before">
-        <img src="after1.jpg" alt="After">
-        <img src="before2.jpg" alt="Before">
-        <img src="after2.jpg" alt="After">
+        <img src="before1.jpg" alt="Before" loading="lazy">
+        <img src="after1.jpg" alt="After" loading="lazy">
+        <img src="before2.jpg" alt="Before" loading="lazy">
+        <img src="after2.jpg" alt="After" loading="lazy">
       </div>
     </div>
   </section>
@@ -205,8 +200,8 @@
   <!-- ========== KONTAK ========== -->
   <section id="contact" class="section contact">
     <div class="container">
-      <h2>📞 Kontak Kami</h2>
-      <p>Hubungi kami untuk layanan terbaik Anda:</p>
+      <h2 class="section-title">📞 Kontak Kami</h2>
+      <p class="section-subtitle">Hubungi kami untuk layanan terbaik Anda:</p>
       <div class="contact-buttons">
         <a href="https://wa.me/6281770070490" class="btn">💬 WhatsApp</a>
         <a href="https://instagram.com/washlabs.ind" class="btn">📷 Instagram</a>
@@ -215,15 +210,17 @@
     </div>
   </section>
 
+  <!-- ========== FOOTER ========== -->
   <footer class="footer">
-    <p>&copy; 2025 WashLabs.indonesia | Premium shoes, bag & Helmet Care</p>
+    <p>&copy; 2025 WashLabs.indonesia | Premium Shoes, Bag & Helmet Care</p>
   </footer>
 
-  <script src="script.js"></script>
-  <!-- Tombol WhatsApp Mengambang -->
-<a href="https://wa.me/6281770070490" class="wa-float" target="_blank" rel="noopener">
-  <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp" />
-</a>
+  <!-- WhatsApp Floating Button -->
+  <a href="https://wa.me/6281770070490" class="wa-float" target="_blank" rel="noopener">
+    <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp" />
+  </a>
 
+  <!-- JS -->
+  <script src="script.js"></script>
 </body>
 </html>
