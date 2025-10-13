@@ -458,7 +458,7 @@ body {
 /* === Tombol Mengambang === */
 .floating-spin-btn {
   position: fixed;
-  bottom: 25px;
+  bottom: 18px;
   right: 25px;
   background: linear-gradient(135deg, #2563eb, #3b82f6);
   color: white;
