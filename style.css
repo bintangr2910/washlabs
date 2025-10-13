@@ -571,9 +571,9 @@ body {
   height: 0;
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
-  border-top: 25px solid #facc15;
+  border-top: 25px solid #000000;
   position: absolute;
-  bottom: -20px;
+  bottom: 130px;
   left: 50%;
   transform: translateX(-50%) rotate(180deg);
   z-index: 5;
