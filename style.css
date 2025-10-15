@@ -3,7 +3,7 @@
 ========================= */
 :root {
   --primary: #1d2026;
-  --accent: #00c3ff;
+  --accent: #34c2ed;
   --text: #fff;
   --gray: #a9b3c1;
   --text-light: #f5f5f5;
@@ -166,19 +166,8 @@ body {
   margin: 15px 0 25px;
 }
 
-.btn {
-  background: var(--accent);
-  color: #000;
-  padding: 10px 25px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: 0.3s;
-}
-.btn:hover {
-  box-shadow: 0 0 20px var(--accent);
-  transform: translateY(-3px);
-}
+
+
 
 /* =========================
    GLOBAL SECTION STYLE
@@ -449,22 +438,15 @@ body {
    SPIN
 ========================= */
 
-body {
-  font-family: "Poppins", sans-serif;
-  margin: 0;
-  background: #0f172a;
-  color: #fff;
-}
-
-/* === Tombol Mengambang === */
+/* ===== Tombol Spin Mengambang ===== */
 .floating-spin-btn {
   position: fixed;
-  bottom: 18px;
+  bottom: 20px;
   right: 25px;
   background: linear-gradient(135deg, #2563eb, #3b82f6);
-  color: white;
+  color: #fff;
   border: none;
-  padding: 12px 20px;
+  padding: 14px 22px;
   border-radius: 50px;
   cursor: pointer;
   font-weight: 600;
@@ -477,7 +459,7 @@ body {
   box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
 }
 
-/* === Modal === */
+/* ===== Modal Spin ===== */
 .spin-modal {
   display: none;
   position: fixed;
@@ -486,15 +468,12 @@ body {
   justify-content: center;
   align-items: center;
 }
-
-.spin-modal.active {
-  display: flex;
-}
+.spin-modal.active { display: flex; }
 
 .spin-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0,0,0,0.6);
   backdrop-filter: blur(5px);
 }
 
@@ -505,11 +484,10 @@ body {
   border-radius: 20px;
   text-align: center;
   width: 350px;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 25px rgba(0,0,0,0.5);
   z-index: 2100;
 }
 
-/* === Tombol Tutup === */
 .close-btn {
   position: absolute;
   top: 10px;
@@ -521,7 +499,7 @@ body {
   cursor: pointer;
 }
 
-/* === Wheel Area === */
+/* ===== Wheel ===== */
 .wheel-container {
   position: relative;
   width: 280px;
@@ -533,77 +511,101 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 8px solid #3b82f6;
+  border: 6px solid #3b82f6;
   position: relative;
   overflow: hidden;
   background: conic-gradient(
-    #06b6d4 0deg 60deg,
-    #3b82f6 60deg 120deg,
-    #8b5cf6 120deg 180deg,
-    #ef4444 180deg 240deg,
-    #f59e0b 240deg 300deg,
-    #22c55e 300deg 360deg
+    #f97316 0deg 60deg,
+    #facc15 60deg 120deg,
+    #10b981 120deg 180deg,
+    #3b82f6 180deg 240deg,
+    #8b5cf6 240deg 300deg,
+    #ef4444 300deg 360deg
   );
-  transition: transform 5s cubic-bezier(0.25, 1, 0.3, 1);
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
+  transition: transform 5s cubic-bezier(0.25,1,0.3,1);
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.3);
 }
 
-/* === Segmen Text === */
+/* ===== Segmen Text ===== */
 .segment {
   position: absolute;
-  left: 50%;
   top: 50%;
+  left: 50%;
   transform-origin: 0 0;
   font-weight: bold;
   font-size: 1rem;
-  color: white;
+  color: #fff;
   pointer-events: none;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
 }
-.seg1 { transform: rotate(30deg) translate(0, -110px) rotate(-30deg); }
-.seg2 { transform: rotate(90deg) translate(0, -95px) rotate(-90deg); }   /* 10% lebih ke dalam */
-.seg3 { transform: rotate(150deg) translate(0, -95px) rotate(-150deg); } /* 15% lebih ke dalam */
-.seg4 { transform: rotate(210deg) translate(0, -110px) rotate(-210deg); }
-.seg5 { transform: rotate(270deg) translate(0, -110px) rotate(-270deg); }
-.seg6 { transform: rotate(330deg) translate(0, -110px) rotate(-330deg); }
+/* Label horizontal tiap sektor */
+.seg1 { transform: rotate(30deg) translate(0,-110px) rotate(-30deg); }
+.seg2 { transform: rotate(90deg) translate(0,-110px) rotate(-90deg); }
+.seg3 { transform: rotate(150deg) translate(0,-110px) rotate(-150deg); }
+.seg4 { transform: rotate(210deg) translate(0,-110px) rotate(-210deg); }
+.seg5 { transform: rotate(270deg) translate(0,-110px) rotate(-270deg); }
+.seg6 { transform: rotate(330deg) translate(0,-110px) rotate(-330deg); }
 
-/* === Pointer Lancip ke Bawah === */
+/* ===== Pointer ===== */
 .pointer {
   width: 0;
   height: 0;
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
-  border-top: 35px solid #000000;
+  border-top: 40px solid #000;
   position: absolute;
-  bottom: 130px;
+  bottom: 135px;
   left: 50%;
   transform: translateX(-50%) rotate(180deg);
   z-index: 5;
+ 
 }
 
-/* === Tombol Putar === */
+/* ===== Tombol Putar ===== */
 .spin-btn {
   background: linear-gradient(135deg, #10b981, #22c55e);
-  color: white;
+  color: #fff;
   border: none;
   padding: 12px 25px;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: 700;
+  font-size: 1rem;
   transition: transform 0.2s ease;
 }
 .spin-btn:hover { transform: scale(1.05); }
 
+/* ===== Hasil dan Catatan ===== */
 .result-text {
   margin-top: 15px;
   color: #facc15;
   font-weight: bold;
+  font-size: 1.1rem;
 }
 
 .note {
   margin-top: 10px;
   font-size: 0.85rem;
   color: #9ca3af;
+  line-height: 1.3;
 }
+
+/* ===== PROMO ===== */
+.hero-content > * {
+  margin-bottom: 20px; /* Jarak antar elemen di hero */
+}
+
+.promo-bar {
+  display: inline-block;
+  background-color: var(--accent);
+  color: #000;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+}
+
+
 
 
 /* =========================
