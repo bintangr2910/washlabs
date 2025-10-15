@@ -594,7 +594,7 @@ body {
   margin-bottom: 20px; /* Jarak antar elemen di hero */
 }
 
-.promo-bar {
+.btn {
   display: inline-block;
   background-color: var(--accent);
   color: #000;
