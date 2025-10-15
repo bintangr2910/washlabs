@@ -1,23 +1,67 @@
 /* =========================
-   MENU MOBILE
+   MENU MOBILE & ADMIN RESET
 ========================= */
 const menuBtn = document.getElementById("menu-toggle");
 const navLinks = document.getElementById("nav-links");
-
-const adminPassword = "washlabsadmin"; // ganti sesuai keinginan
+const adminPassword = "washlabsadmin";
 let adminMenuShown = localStorage.getItem("washlabs_admin_logged") === "true";
 
+// Tambahkan tombol reset admin
+const navItems = Array.from(navLinks.querySelectorAll("li"));
+let kontakLi = navItems.find(li => li.textContent.trim().toLowerCase() === "kontak");
+let resetBtn;
+
+if (kontakLi) {
+  const resetBtnLi = document.createElement("li");
+  resetBtn = document.createElement("button");
+  resetBtn.textContent = "Reset Spin (Admin)";
+  resetBtn.classList.add("admin-reset-btn");
+  resetBtnLi.appendChild(resetBtn);
+  kontakLi.insertAdjacentElement("afterend", resetBtnLi);
+  resetBtn.style.display = adminMenuShown ? "block" : "none";
+
+  // Event reset
+  resetBtn.addEventListener("click", async () => {
+    const input = prompt("Masukkan password admin:");
+    if (input === adminPassword) {
+      localStorage.setItem("washlabsadmin", "true");
+      resetBtn.style.display = "block";
+
+      try {
+        const response = await fetch("/api/reset-spin", { method: "POST" });
+        if (response.ok) {
+          alert("✅ Semua status spin user telah di-reset.");
+
+          // Reset spin di admin browser juga
+          localStorage.removeItem("washlabs_spin_done");
+          if (spinButton) {
+            spinButton.disabled = false;
+            spinButton.textContent = "PUTAR";
+          }
+        } else {
+          alert("❌ Gagal mereset. Coba lagi.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("❌ Terjadi error saat mereset spin.");
+      }
+    } else if (input) {
+      alert("❌ Password salah!");
+    }
+  });
+}
+
+// Toggle menu
 if (menuBtn && navLinks) {
   menuBtn.addEventListener("click", () => {
     navLinks.classList.toggle("active");
 
-    // Tampilkan prompt admin jika belum login
-    if (!adminMenuShown) {
+    if (!adminMenuShown && resetBtn) {
       const input = prompt("Masukkan password admin untuk akses menu reset:");
       if (input === adminPassword) {
         localStorage.setItem("washlabs_admin_logged", "true");
         adminMenuShown = true;
-        adminLi.style.display = "block"; // tampilkan menu admin
+        resetBtn.style.display = "block";
       } else if (input) {
         alert("❌ Password salah! Menu admin tidak ditampilkan.");
       }
@@ -77,7 +121,10 @@ let isSpinning = false;
 openBtn.addEventListener("click", () => {
   modal.classList.add("active");
   resultText.textContent = "";
-  spinButton.disabled = false;
+  if (!localStorage.getItem(SPIN_KEY)) {
+    spinButton.disabled = false;
+    spinButton.textContent = "PUTAR";
+  }
 });
 
 closeBtn.addEventListener("click", () => modal.classList.remove("active"));
@@ -122,46 +169,3 @@ spinButton.addEventListener("click", () => {
     isSpinning = false;
   }, 2400);
 });
-/* =========================
-   ADMIN RESET DI BAWAH KONTAK DI MENU MOBILE
-========================= */
-const navItems = Array.from(navLinks.querySelectorAll("li")); // ambil semua li di menu
-let kontakLi = navItems.find(li => li.textContent.trim().toLowerCase() === "kontak");
-
-if (kontakLi) {
-  const resetBtnLi = document.createElement("li"); // buat list item baru
-  const resetBtn = document.createElement("button");
-  resetBtn.textContent = "Reset Spin (Admin)";
-  resetBtn.style.cssText = `
-    background: #ef4444;
-    color: #fff;
-    padding: 6px 12px;
-    border-radius: 8px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    width: 100%;
-    text-align: left;
-    margin-top: 5px;
-  `;
-  resetBtnLi.appendChild(resetBtn);
-
-  // sisipkan setelah kontak
-  kontakLi.insertAdjacentElement("afterend", resetBtnLi);
-
-  resetBtn.addEventListener("click", () => {
-    const input = prompt("Masukkan password admin:");
-    if (input === adminPassword) {
-      localStorage.removeItem(SPIN_KEY);
-      alert("✅ Status spin telah di-reset. User dapat spin lagi.");
-      spinButton.disabled = false;
-      spinButton.textContent = "PUTAR";
-    } else if (input) {
-      alert("❌ Password salah!");
-    }
-  });
-
-  // Default disembunyikan sampai admin login via prompt
-  resetBtnLi.style.display = adminMenuShown ? "block" : "none";
-}
-
