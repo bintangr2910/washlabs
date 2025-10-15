@@ -122,40 +122,7 @@ spinButton.addEventListener("click", () => {
     isSpinning = false;
   }, 2400);
 });
-
 /* =========================
-   ADMIN RESET DI BAWAH KONTAK
-========================= */
-const contactSection = document.getElementById("contact"); // pastikan section kontak punya id="contact"
-
-if (contactSection) {
-  const resetBtn = document.createElement("button");
-  resetBtn.textContent = "Reset Spin (Admin)";
-  resetBtn.style.cssText = `
-    background: #ef4444;
-    color: #fff;
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 10px;
-    display: block;
-  `;
-  contactSection.appendChild(resetBtn);
-
-  resetBtn.addEventListener("click", () => {
-    const input = prompt("Masukkan password admin:");
-    if (input === adminPassword) {
-      localStorage.removeItem(SPIN_KEY);
-      alert("✅ Status spin telah di-reset. User dapat spin lagi.");
-      spinButton.disabled = false;
-      spinButton.textContent = "PUTAR";
-    } else if (input) {
-      alert("❌ Password salah!");
-    }
-  });
-}/* =========================
    ADMIN RESET DI BAWAH KONTAK DI MENU MOBILE
 ========================= */
 const navItems = Array.from(navLinks.querySelectorAll("li")); // ambil semua li di menu
