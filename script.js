@@ -24,7 +24,7 @@ if (kontakLi) {
   resetBtn.addEventListener("click", async () => {
     const input = prompt("Masukkan password admin:");
     if (input === adminPassword) {
-      localStorage.setItem("washlabsadmin", "true");
+      localStorage.setItem("washlabsadmin_logged", "true");
       resetBtn.style.display = "block";
 
       try {
