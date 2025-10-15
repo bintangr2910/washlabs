@@ -8,7 +8,7 @@ let adminMenuShown = localStorage.getItem("washlabs_admin_logged") === "true";
 
 // Tambahkan tombol reset admin
 const navItems = Array.from(navLinks.querySelectorAll("li"));
-let kontakLi = navItems.find(li => li.textContent.trim().toLowerCase() === "kontak");
+const kontakLi = navItems.find(li => li.textContent.trim().toLowerCase() === "kontak");
 let resetBtn;
 
 if (kontakLi) {
@@ -23,42 +23,32 @@ if (kontakLi) {
   // Event reset
   resetBtn.addEventListener("click", async () => {
     const input = prompt("Masukkan password admin:");
-    if (input === adminPassword) {
-      localStorage.setItem("washlabsadmin_logged", "true");
+    if (input && input.trim() === adminPassword) {
+      localStorage.setItem("washlabs_admin_logged", "true");
       resetBtn.style.display = "block";
 
-      try {
-        const response = await fetch("/api/reset-spin", { method: "POST" });
-        if (response.ok) {
-          alert("✅ Semua status spin user telah di-reset.");
-
-          // Reset spin di admin browser juga
-          localStorage.removeItem("washlabs_spin_done");
-          if (spinButton) {
-            spinButton.disabled = false;
-            spinButton.textContent = "PUTAR";
-          }
-        } else {
-          alert("❌ Gagal mereset. Coba lagi.");
-        }
-      } catch (err) {
-        console.error(err);
-        alert("❌ Terjadi error saat mereset spin.");
+      // Reset spin user
+      localStorage.removeItem("washlabs_spin_done");
+      if (spinButton) {
+        spinButton.disabled = false;
+        spinButton.textContent = "PUTAR";
       }
+
+      alert("✅ Semua status spin user telah di-reset.");
     } else if (input) {
       alert("❌ Password salah!");
     }
   });
 }
 
-// Toggle menu
+// Toggle menu mobile
 if (menuBtn && navLinks) {
   menuBtn.addEventListener("click", () => {
     navLinks.classList.toggle("active");
 
     if (!adminMenuShown && resetBtn) {
       const input = prompt("Masukkan password admin untuk akses menu reset:");
-      if (input === adminPassword) {
+      if (input && input.trim() === adminPassword) {
         localStorage.setItem("washlabs_admin_logged", "true");
         adminMenuShown = true;
         resetBtn.style.display = "block";
@@ -130,7 +120,7 @@ openBtn.addEventListener("click", () => {
 closeBtn.addEventListener("click", () => modal.classList.remove("active"));
 backdrop.addEventListener("click", () => modal.classList.remove("active"));
 
-// Weighted random function
+// Weighted random
 function weightedRandom(weights) {
   let total = weights.reduce((a, b) => a + b, 0);
   let random = Math.random() * total;
