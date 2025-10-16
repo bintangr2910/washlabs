@@ -20,20 +20,12 @@ if (kontakLi) {
   kontakLi.insertAdjacentElement("afterend", resetBtnLi);
   resetBtn.style.display = adminMenuShown ? "block" : "none";
 
-  // Event reset
-  resetBtn.addEventListener("click", async () => {
+  resetBtn.addEventListener("click", () => {
     const input = prompt("Masukkan password admin:");
-    if (input && input.trim() === adminPassword) {
+    if (input?.trim() === adminPassword) {
       localStorage.setItem("washlabs_admin_logged", "true");
       resetBtn.style.display = "block";
-
-      // Reset spin user
-      localStorage.removeItem("washlabs_spin_done");
-      if (spinButton) {
-        spinButton.disabled = false;
-        spinButton.textContent = "PUTAR";
-      }
-
+      localStorage.removeItem("spin_done_hash");
       alert("✅ Semua status spin user telah di-reset.");
     } else if (input) {
       alert("❌ Password salah!");
@@ -45,10 +37,9 @@ if (kontakLi) {
 if (menuBtn && navLinks) {
   menuBtn.addEventListener("click", () => {
     navLinks.classList.toggle("active");
-
     if (!adminMenuShown && resetBtn) {
       const input = prompt("Masukkan password admin untuk akses menu reset:");
-      if (input && input.trim() === adminPassword) {
+      if (input?.trim() === adminPassword) {
         localStorage.setItem("washlabs_admin_logged", "true");
         adminMenuShown = true;
         resetBtn.style.display = "block";
@@ -90,7 +81,7 @@ if (form && totalPrice) {
 }
 
 /* =========================
-   SPIN DISKON
+   SPIN DISKON AMAN
 ========================= */
 const openBtn = document.getElementById("spinOpen");
 const modal = document.getElementById("spinModal");
@@ -103,7 +94,9 @@ const resultText = document.getElementById("resultText");
 const sectors = ["15%", "5%", "25%", "5%", "10%", "ZONK"];
 const sectorWeights = [1, 6, 0.3, 8, 1, 8];
 const sectorAngle = 360 / sectors.length;
-const SPIN_KEY = "washlabs_spin_done";
+
+// Gunakan hash sederhana agar tidak bisa dimanipulasi
+const SPIN_KEY_HASH = "spin_done_hash";
 
 let isSpinning = false;
 
@@ -111,7 +104,7 @@ let isSpinning = false;
 openBtn.addEventListener("click", () => {
   modal.classList.add("active");
   resultText.textContent = "";
-  if (!localStorage.getItem(SPIN_KEY)) {
+  if (!localStorage.getItem(SPIN_KEY_HASH)) {
     spinButton.disabled = false;
     spinButton.textContent = "PUTAR";
   }
@@ -131,14 +124,25 @@ function weightedRandom(weights) {
   return weights.length - 1;
 }
 
-// Spin logic
-if (localStorage.getItem(SPIN_KEY)) {
+// Hash sederhana untuk status spin
+function hashString(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return hash.toString(16);
+}
+
+// Cek spin
+if (localStorage.getItem(SPIN_KEY_HASH)) {
   spinButton.disabled = true;
   spinButton.textContent = "Sudah Spin";
 }
 
+// Spin logic
 spinButton.addEventListener("click", () => {
-  if (isSpinning || localStorage.getItem(SPIN_KEY)) return;
+  if (isSpinning || localStorage.getItem(SPIN_KEY_HASH)) return;
   isSpinning = true;
 
   const randomIndex = weightedRandom(sectorWeights);
@@ -155,7 +159,10 @@ spinButton.addEventListener("click", () => {
 
     spinButton.disabled = true;
     spinButton.textContent = "Sudah Spin";
-    localStorage.setItem(SPIN_KEY, "true");
+
+    // Simpan hash bukan teks langsung
+    localStorage.setItem(SPIN_KEY_HASH, hashString(selected + Date.now()));
+
     isSpinning = false;
   }, 2400);
 });
