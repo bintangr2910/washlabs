@@ -92,7 +92,7 @@ const spinButton = document.getElementById("spinButton");
 const resultText = document.getElementById("resultText");
 
 const sectors = ["15%", "5%", "25%", "5%", "10%", "ZONK"];
-const sectorWeights = [1, 6, 0.5, 8, 1, 8];
+const sectorWeights = [1, 8, 0.5, 8, 3, 8];
 const sectorAngle = 360 / sectors.length;
 
 // Gunakan hash sederhana agar tidak bisa dimanipulasi
