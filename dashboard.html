@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | WashLabs</title>
+  <!-- Hubungkan ke CSS tema gelap -->
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+<div class="container">
+  <h1>🛠 Dashboard Admin — WashLabs</h1>
+
+  <button id="logout">Logout</button>
+
+  <div class="form">
+    <input type="text" id="name" placeholder="Nama Pelanggan">
+    <input type="text" id="item" placeholder="Jenis Barang">
+    <input type="number" id="quantity" placeholder="Jumlah">
+    
+    <button onclick="addOrder()">Tambah Pesanan</button>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Jenis Barang</th>
+          <th>Jumlah</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+
+      <tbody id="orderTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+/* ===============================
+   CEK LOGIN ADMIN
+=============================== */
+if (localStorage.getItem("washlabs_admin_logged") !== "true") {
+  window.location.href = "admin.html";
+}
+
+/* ===============================
+   LOGOUT ADMIN
+=============================== */
+document.getElementById("logout").addEventListener("click", () => {
+  localStorage.removeItem("washlabs_admin_logged");
+  window.location.href = "index.html";
+});
+
+/* ===============================
+   LOAD DATA PESANAN
+=============================== */
+let orderList = [];
+
+async function loadOrders() {
+  const res = await fetch("http://localhost:3000/api/orders");
+  const data = await res.json();
+  orderList = data;
+  renderTable();
+}
+
+/* ===============================
+   RENDER TABEL
+=============================== */
+function renderTable() {
+  const table = document.getElementById("orderTable");
+  table.innerHTML = "";
+
+  orderList.forEach(order => {
+    table.innerHTML += `
+      <tr>
+        <td>${order.name}</td>
+        <td>${order.item}</td>
+        <td>${order.quantity}</td>
+
+        <td>
+          <select onchange="updateStatus('${order.id}', this.value)">
+            <option ${order.status === "Menunggu" ? "selected" : ""}>Menunggu</option>
+            <option ${order.status === "Sedang dicuci" ? "selected" : ""}>Sedang dicuci</option>
+            <option ${order.status === "Pengeringan" ? "selected" : ""}>Pengeringan</option>
+            <option ${order.status === "Finishing" ? "selected" : ""}>Finishing</option>
+            <option ${order.status === "Selesai" ? "selected" : ""}>Selesai</option>
+          </select>
+        </td>
+
+        <td>
+          <button class="btn-delete" onclick="deleteOrder('${order.id}')">Hapus</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+/* ===============================
+   TAMBAH PESANAN
+=============================== */
+async function addOrder() {
+  const name = document.getElementById("name").value;
+  const item = document.getElementById("item").value;
+  const quantity = document.getElementById("quantity").value;
+
+  if (!name || !item || !quantity) {
+    alert("Harap isi semua field!");
+    return;
+  }
+
+  await fetch("http://localhost:3000/api/orders", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ name, item, quantity, status: "Menunggu" })
+  });
+
+  loadOrders();
+}
+
+/* ===============================
+   UPDATE STATUS
+=============================== */
+async function updateStatus(id, newStatus) {
+  await fetch(`http://localhost:3000/api/orders/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status: newStatus })
+  });
+}
+
+/* ===============================
+   HAPUS PESANAN
+=============================== */
+async function deleteOrder(id) {
+  if (confirm("Yakin ingin menghapus pesanan?")) {
+    await fetch(`http://localhost:3000/api/orders/${id}`, { method: "DELETE" });
+    loadOrders();
+  }
+}
+
+/* AUTO REFRESH */
+loadOrders();
+setInterval(loadOrders, 5000);
+</script>
+
+</body>
+</html>

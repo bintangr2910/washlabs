@@ -97,7 +97,6 @@ const sectorAngle = 360 / sectors.length;
 
 // Gunakan hash sederhana agar tidak bisa dimanipulasi
 const SPIN_KEY_HASH = "spin_done_hash";
-
 let isSpinning = false;
 
 // Modal control
@@ -124,7 +123,7 @@ function weightedRandom(weights) {
   return weights.length - 1;
 }
 
-// Hash sederhana untuk status spin
+// Hash sederhana
 function hashString(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -160,9 +159,20 @@ spinButton.addEventListener("click", () => {
     spinButton.disabled = true;
     spinButton.textContent = "Sudah Spin";
 
-    // Simpan hash bukan teks langsung
     localStorage.setItem(SPIN_KEY_HASH, hashString(selected + Date.now()));
 
     isSpinning = false;
   }, 2400);
 });
+
+/* =========================
+   FITUR TRACKING (OPSI A)
+========================= */
+
+// Tombol tracking di navbar
+const trackingBtn = document.getElementById("trackingBtn");
+if (trackingBtn) {
+  trackingBtn.addEventListener("click", () => {
+    window.location.href = "tracking.html";
+  });
+}
