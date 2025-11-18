@@ -1,48 +1,47 @@
 /* =========================
-   TRACKING.CSS - DARK THEME
-   Terstruktur & Rapi
+   ADMIN.CSS (LENGKAP)
+   Style untuk Form Login & Tabel Dashboard
 ========================= */
 
-/* ====== BODY CONTAINER ====== */
-body {
-    font-family: "Poppins", sans-serif;
-    background: var(--bg, #1b1d23);
-    color: var(--text, #fff);
-    margin: 0;
-    padding: 0;
+/* Variabel Warna (diasumsikan dari style.css) */
+:root {
+    --bg: #1b1d23;
+    --card-bg: linear-gradient(145deg, #1e2128, #17191f);
+    --text: #fff;
+    --text-light: #f5f5f5;
+    --accent: #00c3ff;
+    --gray: #a9b3c1;
+    --shadow: rgba(0,0,0,0.35);
 }
 
-.section {
-    padding: 50px 15px;
+/* ====== ADMIN LOGIN FORM (INI BAGIAN BARU) ====== */
+
+/* Kontainer Form Login */
+#login-form {
+    /* Ini kuncinya: max-width dan margin auto untuk di tengah */
+    max-width: 450px; 
+    margin: 40px auto; /* 40px atas/bawah, auto kiri/kanan */
 }
 
-/* ====== FORM INPUT BOX ====== */
+/* Kotak Form Login (Style dari tracking.css lama) */
 .calc-box {
-    background: linear-gradient(145deg, #1e2128, #17191f);
+    background: var(--card-bg);
     padding: 30px 25px;
     border-radius: 18px;
-    max-width: 400px;
-    margin: 20px auto;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.35);
-    text-align: center;
-}
-
-.calc-box h3 {
-    color: var(--accent, #00c3ff);
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-    text-shadow: 0 0 12px rgba(0,195,255,0.3);
+    box-shadow: 0 8px 25px var(--shadow);
+    border: 1px solid rgba(255,255,255,0.12);
+    text-align: left;
 }
 
 .calc-box label {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
-    text-align: left;
     color: var(--text-light, #f5f5f5);
 }
 
-.calc-box input {
+.calc-box input[type="text"],
+.calc-box input[type="password"] {
     width: 100%;
     padding: 12px 15px;
     border-radius: 12px;
@@ -54,79 +53,21 @@ body {
     transition: 0.25s ease;
 }
 
-.calc-box input:focus {
+.calc-box input[type="text"]:focus,
+.calc-box input[type="password"]:focus {
     outline: none;
     border-color: var(--accent, #00c3ff);
     background: #262a33;
     box-shadow: 0 0 10px rgba(0,195,255,0.25);
 }
 
-/* Tombol */
-.calc-box button {
-    width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    border: none;
-    background: var(--accent, #00c3ff);
-    color: #000;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: 0.25s ease;
+/* Tombol Login (Spin-btn dari style.css) */
+.calc-box .spin-btn {
+     width: 100%;
 }
 
-.calc-box button:hover {
-    transform: scale(1.03);
-    box-shadow: 0 0 20px rgba(0,195,255,0.4);
-}
-
-/* ====== HASIL TRACKING ====== */
-#resultContainer {
-    background: linear-gradient(145deg, #1e2128, #17191f);
-    padding: 25px 20px;
-    border-radius: 18px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.35);
-    margin: 30px auto 0 auto;
-    max-width: 500px;
-    display: none;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-#resultContainer h3 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: var(--accent, #00c3ff);
-    text-shadow: 0 0 12px rgba(0,195,255,0.3);
-    font-size: 1.5rem;
-}
-
-#resultContainer p {
-    font-size: 1rem;
-    margin-bottom: 12px;
-    color: var(--text-light, #f5f5f5);
-    line-height: 1.5;
-}
-
-#resultContainer span {
-    font-weight: 600;
-    display: inline-block;
-}
-
-/* Status Pesanan */
-#trackStatus {
-    font-size: 1.8rem;
-    font-weight: 700;
-    display: block;
-    text-align: center;
-    padding: 10px 0;
-    margin-top: 15px;
-    color: var(--accent, #00c3ff);
-    letter-spacing: 1px;
-    transition: color 0.3s ease;
-}
-
-/* ====== PESAN ERROR ====== */
-#errorMessage {
+/* Pesan Error */
+#loginMessage {
     padding: 12px 15px;
     background: rgba(239, 68, 68, 0.1);
     border-radius: 12px;
@@ -134,31 +75,140 @@ body {
     border: 1px solid #ef4444;
     color: #ef4444;
     font-weight: 500;
-    margin: 15px auto;
-    max-width: 400px;
-    display: none;
+    margin-top: 15px;
 }
 
-/* ====== RESPONSIF ====== */
+/* ====== FORM TAMBAH PESANAN (INI JUGA BARU) ====== */
+#addOrderForm label {
+     display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-light, #f5f5f5);
+}
+
+#addOrderForm input[type="text"],
+#addOrderForm input[type="number"] {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: #22252d;
+    color: var(--text-light, #f5f5f5);
+    font-size: 1rem;
+    margin-bottom: 15px;
+    transition: 0.25s ease;
+}
+ #addOrderForm input[type="text"]:focus,
+#addOrderForm input[type="number"]:focus {
+     outline: none;
+    border-color: var(--accent, #00c3ff);
+    background: #262a33;
+    box-shadow: 0 0 10px rgba(0,195,255,0.25);
+}
+
+
+/* ====== CONTAINER TABEL (Style Lama Anda) ====== */
+.queue-container {
+    background: var(--card-bg);
+    padding: 0;
+    border-radius: 18px;
+    margin: 20px auto;
+    box-shadow: 0 8px 25px var(--shadow);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+/* ====== TABEL ANTRIAN (Style Lama Anda) ====== */
+.queue-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Header Tabel */
+.queue-table th {
+    background: var(--accent, #00c3ff);
+    color: #000;
+    padding: 15px 18px;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 600;
+    white-space: nowrap; 
+}
+
+/* Baris/Sel Tabel */
+.queue-table td {
+    padding: 15px 18px;
+    color: var(--text-light, #f5f5f5);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    white-space: nowrap; 
+    vertical-align: middle;
+}
+
+.queue-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.queue-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ====== ELEMEN KHUSUS ADMIN (Dropdown & Tombol) ====== */
+.queue-table tbody select {
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: #22252d;
+    color: var(--text-light);
+    border: 1px solid rgba(255,255,255,0.12);
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.queue-table tbody select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(0,195,255,0.25);
+    outline: none;
+}
+
+.queue-table tbody button {
+    background: #ef4444;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.queue-table tbody button:hover {
+    background: #dc2626;
+    transform: scale(1.05);
+}
+
+
+/* ====== RESPONSIF (HP) ====== */
 @media (max-width: 768px) {
-    .calc-box {
-        width: 90%;
-        padding: 20px 15px;
+    .section {
+        padding: 30px 5px; 
     }
 
-    #resultContainer {
-        padding: 20px 15px;
+    /* Agar tabel bisa scroll ke samping */
+    .queue-container {
+        overflow-x: auto; 
     }
 
-    #resultContainer h3 {
-        font-size: 1.3rem;
+    .queue-table th {
+        padding: 12px 15px;
+        font-size: 0.9rem;
     }
 
-    #resultContainer p {
-        font-size: 0.95rem;
+    .queue-table td {
+        padding: 12px 15px;
+        font-size: 0.9rem;
     }
 
-    #trackStatus {
-        font-size: 1.5rem;
+    .queue-table tbody select {
+        padding: 5px 8px;
+        font-size: 0.85rem;
     }
 }

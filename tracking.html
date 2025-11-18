@@ -3,112 +3,136 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracking Pesanan | WashLabs.ind</title>
+    <title>Live Antrian | WashLabs.ind</title>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Panggil CSS Global (jika ada, untuk header/footer) -->
+    <link rel="stylesheet" href="style.css" />
+    
+    <!-- Panggil CSS Khusus Halaman Ini -->
     <link rel="stylesheet" href="tracking.css" />
+    
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+    <!-- Header (dari style.css) -->
     <header class="header">
         <nav class="navbar">
-            <a href="index.html" class="logo">WASHLABS.<span>INDONESIA</span></a>
+            <a href="index.html" class="logo">WASHLABS.<span>LIVE</span></a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="btn" style="background: transparent; border: 1px solid var(--accent); color: var(--accent);">Kembali ke Home</a></li>
+            </ul>
         </nav>
     </header>
 
-    <section class="section calculator" style="min-height: 80vh;">
+    <!-- Konten Utama (dari tracking.css) -->
+    <section class="section">
         <div class="container">
-            <h2 class="section-title" style="text-align:center;">🔎 Cek Status Pesanan</h2>
-            <p class="section-subtitle" style="text-align:center;">Masukkan ID Pesanan (6 digit) Anda untuk melihat status terbaru.</p>
+            <h2 class="section-title">📋 Daftar Antrian</h2>
+            <p class="section-subtitle">Pantau status pengerjaan secara real-time. Data diperbarui otomatis.</p>
 
-            <!-- FORM TRACKING -->
-            <div class="input-box">
-                <label for="orderIdInput">ID Pesanan:</label>
-                <input type="text" id="orderIdInput" placeholder="Contoh: 123456" maxlength="6" />
-                <button id="trackButton">Cek Status</button>
+            <!-- Tabel Antrian -->
+            <div class="queue-container">
+                <table class="queue-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nama Pelanggan</th>
+                            <th>Barang</th>
+                            <th>Status Pengerjaan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="queueList">
+                        <!-- Data akan dimuat di sini oleh JavaScript -->
+                        <tr><td colspan="4" class="loading-text">Sedang memuat data antrian... ⏳</td></tr>
+                    </tbody>
+                </table>
             </div>
-
-            <!-- HASIL TRACKING -->
-            <div id="resultContainer" style="display: none;">
-                <h3>Detail Pesanan</h3>
-                <p>Nama: <span id="trackNama"></span></p>
-                <p>Barang: <span id="trackBarang"></span></p>
-                <p>Jumlah: <span id="trackJumlah"></span></p>
-                <p>Tanggal Masuk: <span id="trackDate"></span></p>
-                <p>
-                    Status: <span id="trackStatus"></span>
-                </p>
-            </div>
-
-            <!-- ERROR MESSAGE -->
-            <p id="errorMessage" style="display: none;"></p>
+            
+            <p style="margin-top: 20px; font-size: 0.9rem; color: var(--gray); text-align: center;">
+                * Halaman akan diperbarui otomatis setiap 15 detik.
+            </p>
         </div>
     </section>
 
-    <footer class="footer" style="text-align:center; padding:20px;">
+    <!-- Footer (dari style.css) -->
+    <footer class="footer">
         <p>© 2025 WashLabs.indonesia</p>
     </footer>
 
+    <!-- Script JS -->
     <script src="script.js"></script>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const _supabase = window.supabaseClient; // Ambil client dari script.js
-            const trackButton = document.getElementById('trackButton');
-            const orderIdInput = document.getElementById('orderIdInput');
-            const resultContainer = document.getElementById('resultContainer');
-            const errorMessage = document.getElementById('errorMessage');
+        // Script ini TIDAK PERLU diubah, sudah sesuai
+        document.addEventListener('DOMContentLoaded', async () => {
+            const _supabase = window.supabaseClient;
+            const tbody = document.getElementById('queueList');
 
-            trackButton.addEventListener('click', async () => {
-                const id = orderIdInput.value.trim();
-                resultContainer.style.display = 'none';
-                errorMessage.style.display = 'none';
+            if (!_supabase) {
+                tbody.innerHTML = '<tr><td colspan="4" class="loading-text" style="color:#ef4444;">Gagal terhubung ke Database.</td></tr>';
+                return;
+            }
 
-                if (!id || id.length !== 6 || isNaN(id)) {
-                    errorMessage.textContent = 'Format ID Pesanan salah. Harus 6 digit angka.';
-                    errorMessage.style.display = 'block';
-                    return;
-                }
-
+            async function fetchQueue() {
                 try {
                     const { data, error } = await _supabase
                         .from('orders')
-                        .select('nama, barang, jumlah, status, create_at')
-                        .eq('id', id)
-                        .single();
+                        .select('id, nama, barang, status') 
+                        .order('create_at', { ascending: false })
+                        .limit(50);
 
-                    if (error || !data) {
-                        errorMessage.textContent = 'ID Pesanan tidak ditemukan.';
-                        errorMessage.style.display = 'block';
+                    if (error) throw error;
+
+                    if (!data || data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="loading-text">Belum ada antrian saat ini.</td></tr>';
                         return;
                     }
 
-                    document.getElementById('trackNama').textContent = data.nama;
-                    document.getElementById('trackBarang').textContent = data.barang;
-                    document.getElementById('trackJumlah').textContent = data.jumlah;
-                    document.getElementById('trackDate').textContent = new Date(data.create_at).toLocaleDateString('id-ID');
+                    tbody.innerHTML = data.map(item => {
+                        let badgeClass = 'status-antri';
+                        let icon = '⏳';
+                        
+                        if (item.status === 'Sedang Dicuci') {
+                            badgeClass = 'status-cuci';
+                            icon = '🫧';
+                        } else if (item.status === 'Selesai') {
+                            badgeClass = 'status-selesai';
+                            icon = '✅';
+                        }
 
-                    const statusElement = document.getElementById('trackStatus');
-                    statusElement.textContent = data.status;
+                        // --- PERUBAHAN DI SINI ---
+                        // const safeName = item.nama.substring(0, 2) + "***"; // Dihapus
+                        const fullName = item.nama; // Diganti
 
-                    // Warna status sesuai
-                    if (data.status === 'Selesai') {
-                        statusElement.style.color = '#10b981'; // Hijau
-                    } else if (data.status === 'Sedang Dicuci') {
-                        statusElement.style.color = '#facc15'; // Kuning
-                    } else {
-                        statusElement.style.color = '#3b82f6'; // Biru
-                    }
-
-                    resultContainer.style.display = 'block';
+                        return `
+                            <tr>
+                                <td style="font-family: monospace; font-weight:bold;">#${item.id}</td>
+                                <td style="font-weight: 500;">${fullName}</td> <!-- Menggunakan nama lengkap -->
+                                <td>${item.barang}</td>
+                                <td>
+                                    <span class="badge ${badgeClass}">
+                                        ${icon} ${item.status}
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
 
                 } catch (err) {
-                    console.error('Error tracking order:', err);
-                    errorMessage.textContent = 'Terjadi kesalahan saat mencari data.';
-                    errorMessage.style.display = 'block';
+                    console.error(err);
+                    tbody.innerHTML = `<tr><td colspan="4" class="loading-text" style="color:#ef4444;">Gagal memuat data.</td></tr>`;
                 }
-            });
+            }
+
+            fetchQueue();
+            setInterval(fetchQueue, 15000); // Auto-refresh
         });
     </script>
 </body>
-</html>
+</html>a

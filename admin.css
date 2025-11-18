@@ -1,90 +1,402 @@
 /* =========================
-   ADMIN DASHBOARD TABLE - DARK THEME
+   ADMIN DASHBOARD CSS
+   (VERSI LENGKAP + MODAL)
 ========================= */
 
-/* Table Container */
-#ordersTable {
+/* ===== VARIABEL WARNA ===== */
+:root {
+    --bg: #1b1d23;
+    --card-bg: linear-gradient(145deg, #1e2128, #17191f);
+    --text: #fff;
+    --text-light: #f5f5f5;
+    --accent: #00c3ff;
+    --gray: #9ca3af;
+    --shadow: rgba(0,0,0,0.35);
+}
+
+/* ===== GLOBAL ===== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-light);
+    font-family: "Poppins", sans-serif;
+}
+
+h2, h3 {
+    color: var(--text-light);
+}
+
+.section {
+    padding: 40px 20px;
+}
+
+/* ===== HEADER ===== */
+.header {
+    background: #111217;
+    padding: 15px 20px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 1.4rem;
+    text-decoration: none;
+    color: var(--text-light);
+    letter-spacing: 1px;
+}
+
+.logo span {
+    color: var(--accent);
+}
+
+.btn {
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: 0.25s;
+}
+
+.btn:hover {
+    opacity: 0.85;
+}
+
+/* ===== LOGIN FORM ===== */
+#login-form {
+    max-width: 450px;
+    margin: 40px auto;
+}
+
+.calc-box {
+    background: var(--card-bg);
+    padding: 30px 25px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 8px 25px var(--shadow);
+}
+
+.calc-box label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.calc-box input {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: #22252d;
+    color: var(--text-light);
+    margin-bottom: 15px;
+    transition: 0.25s;
+}
+
+.calc-box input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #262a33;
+    box-shadow: 0 0 10px rgba(0,195,255,0.25);
+}
+
+/* Tombol */
+.spin-btn {
+    background: var(--accent);
+    border: none;
+    padding: 12px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #000;
+    transition: 0.3s;
+}
+
+.spin-btn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 12px rgba(0,195,255,0.4);
+}
+
+/* Pesan error */
+#loginMessage {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid #ef4444;
+    padding: 12px 15px;
+    border-radius: 12px;
+    color: #ef4444;
+    font-weight: 500;
+}
+
+/* ===== DASHBOARD ===== */
+#admin-dashboard {
+    animation: fade 0.3s ease-out;
+}
+
+@keyframes fade {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+}
+
+.section-subtitle {
+    color: var(--gray);
+    margin-bottom: 20px;
+}
+
+/* ===== FORM TAMBAH ORDER ===== */
+#addOrderForm label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 500;
+    /* PAKSA RATA KIRI (untuk label di dalam box) */
+    text-align: left !important;
+}
+
+#addOrderForm input {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: #22252d;
+    color: var(--text-light);
+    transition: 0.25s;
+}
+
+#addOrderForm input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(0,195,255,0.3);
+}
+
+/* PERBAIKAN 1: Paksa tombol Simpan Pesanan ke tengah */
+#addOrderForm button[type="submit"] {
+    display: block;
+    /* PAKSA margin auto (center) */
+    margin: 20px auto 0 auto !important;
+}
+
+
+#addMessage {
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+/* ===== TABEL ORDER ===== */
+table {
     width: 100%;
     border-collapse: collapse;
-    background: linear-gradient(145deg, #1e2128, #17191f);
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
     margin-top: 30px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    table-layout: fixed;
 }
 
-/* Header */
-#ordersTable thead {
-    background: rgba(0,195,255,0.15);
+thead {
+    background: var(--accent);
+    color: #000;
 }
 
-#ordersTable thead th {
-    padding: 15px 10px;
-    font-size: 0.95rem;
-    color: var(--accent);
-    text-shadow: 0 0 8px rgba(0,195,255,0.3);
+th, td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    vertical-align: middle;
+    word-wrap: break-word;
+}
+
+th {
+    white-space: nowrap;
     text-align: left;
 }
 
-/* Body */
-#ordersTable tbody td {
-    padding: 14px 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    color: var(--text-light);
-    font-size: 0.9rem;
+/* Atur lebar kolom */
+thead th:nth-child(1) { width: 10%; } /* ID */
+thead th:nth-child(2) { width: 20%; } /* Nama */
+thead th:nth-child(3) { width: 15%; } /* Telepon */
+thead th:nth-child(4) { width: 25%; } /* Barang */
+thead th:nth-child(5) { width: 15%; } /* Status */
+thead th:nth-child(6) { width: 15%; } /* Aksi */
+
+
+/* PERBAIKAN 2: Paksa kolom Status dan Aksi rata tengah */
+thead th:nth-child(5),
+thead th:nth-child(6) {
+    text-align: center !important;
 }
 
-/* Remove last border */
-#ordersTable tbody tr:last-child td {
-    border-bottom: none;
+tbody td:nth-child(5) {
+     text-align: center !important;
 }
 
-/* Hover row */
-#ordersTable tbody tr:hover {
-    background: rgba(0,195,255,0.05);
+/* Buat isi kolom Aksi (flex) rata tengah */
+td:last-child {
+    display: flex;
+    align-items: center;
+    justify-content: center !important; /* PAKSA center */
+    gap: 5px;
 }
 
-/* Status select dropdown */
-#ordersTable tbody select {
-    padding: 6px 10px;
+
+tbody tr:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+/* Dropdown status */
+table select {
+    padding: 8px 10px;
     border-radius: 8px;
     background: #22252d;
     color: var(--text-light);
     border: 1px solid rgba(255,255,255,0.12);
     cursor: pointer;
-    transition: 0.25s ease;
+    transition: 0.2s;
+    max-width: 100px; 
 }
 
-#ordersTable tbody select:focus {
+table select:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 10px rgba(0,195,255,0.25);
-    outline: none;
+    box-shadow: 0 0 10px rgba(0,195,255,0.28);
 }
 
-/* Table buttons (delete, etc.) */
-#ordersTable tbody button {
-    background: #ef4444;
-    color: #fff;
-    padding: 6px 12px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.2s ease;
+/* ===== FOOTER ===== */
+.footer {
+    text-align: center !important; /* PAKSA center */
+    padding: 20px;
+    color: var(--gray);
+    margin-top: 40px;
 }
 
-#ordersTable tbody button:hover {
-    background: #dc2626;
-    transform: scale(1.05);
-}
-
-/* Responsive */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-    #ordersTable {
-        font-size: 0.85rem;
+    .section {
+        padding: 20px 10px;
     }
 
-    #ordersTable tbody td, #ordersTable thead th {
-        padding: 10px 6px;
+    /* Hilangkan lebar kolom di HP agar otomatis */
+    thead th:nth-child(1),
+    thead th:nth-child(2),
+    thead th:nth-child(3),
+    thead th:nth-child(4),
+    thead th:nth-child(5),
+    thead th:nth-child(6) {
+        width: auto;
     }
+
+    th, td {
+        padding: 12px 10px;
+        font-size: 0.9rem;
+    }
+
+    table {
+        font-size: 0.9rem;
+        table-layout: auto; /* Kembalikan ke auto di HP */
+    }
+    
+    /* Biarkan aksi di HP jadi 2 baris agar muat */
+    td:last-child {
+        display: block;
+        /* PERBAIKAN 3: Pastikan di HP juga rata tengah */
+        text-align: center !important;
+    }
+
+    /* Buat dropdown/button tidak 100% di HP */
+    table select {
+        padding: 6px 8px;
+        width: auto; /* Jangan 100% */
+        margin-bottom: 5px;
+    }
+}
+
+/* ===== MODAL KUSTOM (PENGGANTI ALERT/CONFIRM) ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    /* Efek fade-in */
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    padding: 25px 30px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    /* Efek zoom-in */
+    animation: zoomIn 0.2s ease-out;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: var(--text-light);
+}
+
+.modal-content p {
+    color: var(--gray);
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.modal-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.modal-btn.confirm {
+    background: var(--accent);
+    color: #000;
+}
+.modal-btn.confirm:hover {
+    opacity: 0.85;
+}
+
+.modal-btn.cancel {
+    background: #333;
+    color: var(--text-light);
+}
+.modal-btn.cancel:hover {
+    background: #444;
+}
+
+/* Animasi Keyframes */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes zoomIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }

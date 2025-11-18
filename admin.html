@@ -4,10 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard | WashLabs.ind</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css" />
+    
+    <link rel="stylesheet" href="admin.css" />
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -19,13 +22,16 @@
     </header>
 
     <section class="section calculator" style="min-height: 80vh;">
+        
         <div id="login-form" class="container" style="max-width: 400px; padding-top: 50px;">
             <h2 class="section-title">🔑 Admin Login</h2>
             <div class="calc-box">
                 <label for="username">Username:</label>
-                <input type="text" id="username" required style="width: 100%; padding: 10px; margin-bottom: 10px;">
+                <input type="text" id="username" required>
+                
                 <label for="password" style="margin-top: 15px;">Password:</label>
-                <input type="password" id="password" required style="width: 100%; padding: 10px; margin-bottom: 10px;">
+                <input type="password" id="password" required>
+                
                 <button id="loginButton" class="spin-btn" style="margin-top: 25px; width: 100%;">Login</button>
                 <p id="loginMessage" class="note" style="margin-top: 15px; color: #ef4444; display: none;"></p>
             </div>
@@ -39,15 +45,20 @@
                 <h3>➕ Tambah Pesanan Baru</h3>
                 <form id="addOrderForm">
                     <label>Nama Pelanggan:</label>
-                    <input type="text" name="nama" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                    <input type="text" name="nama" required>
+                    
                     <label>Nomor Telepon:</label>
-                    <input type="text" name="telepon" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                    <input type="text" name="telepon" required>
+                    
                     <label>Deskripsi Barang:</label>
-                    <input type="text" name="barang" placeholder="Ex: Sepatu Canvas Putih, Helm Half Face" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                    <input type="text" name="barang" placeholder="Ex: Sepatu Canvas Putih, Helm Half Face" required>
+                    
                     <label>Jumlah Item:</label>
-                    <input type="number" name="jumlah" min="1" value="1" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                    <input type="number" name="jumlah" min="1" value="1" required>
+                    
                     <button type="submit" class="spin-btn" style="margin-top: 20px;">Simpan Pesanan</button>
-                    <p id="addMessage" class="note" style="margin-top: 10px; color: #10b981; display: none;"></p>
+                    <!-- Pesan Notifikasi akan ditangani oleh modal kustom -->
+                    <p id="addMessage" class="note" style="margin-top: 10px; display: none;"></p>
                 </form>
             </div>
 
@@ -64,7 +75,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        </tbody>
+                        <!-- Data diisi oleh JS -->
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -74,223 +86,210 @@
         <p>© 2025 WashLabs.indonesia</p>
     </footer>
 
-    <script src="script.js"></script> 
-    
+    <!-- MODAL KUSTOM (PENGGANTI ALERT & CONFIRM) -->
+    <div id="customModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3 id="modalTitle">Konfirmasi</h3>
+            <p id="modalMessage">Apakah Anda yakin?</p>
+            <div class="modal-buttons">
+                <button id="modalConfirmBtn" class="modal-btn confirm">Ya</button>
+                <button id="modalCancelBtn" class="modal-btn cancel">Batal</button>
+            </div>
+        </div>
+    </div>
+
+
     <script>
+        // 1. KONFIGURASI SUPABASE
+        const SUPABASE_URL = 'https://zfevxdhonsbxyybogjjd.supabase.co'; 
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmZXZ4ZGhvbnNieHl5Ym9nampkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0MTU0OTEsImV4cCI6MjA3ODk5MTQ5MX0.p95pmHVjYWL7L-0tx59Wyll6OP9mIsKdbUz1WRJ5P1k'; 
+        
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Pastikan window.supabaseClient sudah tersedia dari script.js
-            // Jika script.js belum selesai memuat, _supabase mungkin undefined.
-            // Sebaiknya pastikan script.js mendefinisikan window.supabaseClient di top-level.
-            const _supabase = window.supabaseClient; 
-
-            const loginForm = document.getElementById('login-form');
-            const adminDashboard = document.getElementById('admin-dashboard');
-            const loginButton = document.getElementById('loginButton');
-            const logoutButton = document.getElementById('logoutButton');
-            const loginMessage = document.getElementById('loginMessage');
-            const addOrderForm = document.getElementById('addOrderForm');
-            const ordersTableBody = document.querySelector('#ordersTable tbody');
-            const addMessage = document.getElementById('addMessage');
-
-            // --- FUNGSI UTILITY ---
-            const isAuthenticated = () => localStorage.getItem('isAdminLoggedIn') === 'true';
             
-            const showDashboard = (show) => {
-                loginForm.style.display = show ? 'none' : 'block';
-                adminDashboard.style.display = show ? 'block' : 'none';
-                logoutButton.style.display = show ? 'block' : 'none'; // Tampilkan tombol logout hanya jika dashboard aktif
-            };
+            const loginForm = document.getElementById('login-form');
+            const dashboard = document.getElementById('admin-dashboard');
+            const loginBtn = document.getElementById('loginButton');
+            const logoutBtn = document.getElementById('logoutButton');
+            const msg = document.getElementById('loginMessage');
 
-            // --- LOGIKA LOGIN ---
-            const handleLogin = async () => {
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
+            // --- Variabel Modal Kustom ---
+            const modal = document.getElementById('customModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+            const modalCancelBtn = document.getElementById('modalCancelBtn');
+            let deleteId = null; // Untuk menyimpan ID yang akan dihapus
 
-                loginMessage.style.display = 'none';
-
-                if (!_supabase) {
-                    console.error("Supabase client belum terinisialisasi.");
-                    loginMessage.textContent = "Terjadi kesalahan sistem (Supabase client missing).";
-                    loginMessage.style.display = 'block';
-                    return;
-                }
-
-                try {
-                    // Cari user di tabel 'admin'
-                    const { data, error } = await _supabase
-                        .from('admin')
-                        .select('username, password')
-                        .eq('username', username)
-                        .single();
-
-                    if (error || !data) {
-                        loginMessage.textContent = 'Username atau password salah!';
-                        loginMessage.style.display = 'block';
-                        return;
-                    }
-                    
-                    // Validasi Password (Sederhana)
-                    // Peringatan: Untuk produksi, password HARUS di-hash (misal pakai bcrypt) di sisi server/database.
-                    if (password === data.password) {
-                        localStorage.setItem('isAdminLoggedIn', 'true');
-                        showDashboard(true);
-                        loadOrders();
-                    } else {
-                        loginMessage.textContent = 'Username atau password salah!';
-                        loginMessage.style.display = 'block';
-                    }
-                } catch (err) {
-                    console.error("Login error:", err);
-                    loginMessage.textContent = "Terjadi kesalahan saat login.";
-                    loginMessage.style.display = 'block';
-                }
-            };
-
-            // --- LOGIKA LOGOUT ---
-            const handleLogout = () => {
-                localStorage.removeItem('isAdminLoggedIn');
-                showDashboard(false);
-                // Opsional: Reset form login
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-            };
-
-            // --- LOGIKA TAMBAH PESANAN ---
-            if (addOrderForm) {
-                addOrderForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    
-                    if (!_supabase) return;
-
-                    const formData = new FormData(addOrderForm);
-                    
-                    // Generate ID unik sederhana (timestamp + random) atau biarkan database handle jika kolom ID auto-increment/uuid
-                    // Untuk contoh ini, kita gunakan timestamp singkat agar unik
-                    const orderId = Date.now().toString().slice(-6); 
-
-                    const newOrder = {
-                        id: orderId, // Atau biarkan Supabase generate ID jika kolomnya serial/uuid
-                        nama: formData.get('nama'),
-                        telepon: formData.get('telepon'),
-                        barang: formData.get('barang'),
-                        jumlah: parseInt(formData.get('jumlah')),
-                        status: 'Antrian', // Status default
-                        create_at: new Date().toISOString()
-                    };
-
-                    try {
-                        const { data, error } = await _supabase
-                            .from('orders')
-                            .insert([newOrder])
-                            .select();
-
-                        if (error) {
-                            addMessage.textContent = 'Gagal menyimpan pesanan: ' + error.message;
-                            addMessage.style.color = '#ef4444';
-                        } else {
-                            addMessage.textContent = `✅ Pesanan untuk ${newOrder.nama} berhasil ditambahkan! ID: ${data[0].id}`;
-                            addMessage.style.color = '#10b981';
-                            addOrderForm.reset();
-                            loadOrders(); // Refresh tabel pesanan
-                        }
-                    } catch (err) {
-                         addMessage.textContent = 'Terjadi kesalahan saat menyimpan.';
-                         addMessage.style.color = '#ef4444';
-                    }
-                    
-                    addMessage.style.display = 'block';
-                    setTimeout(() => addMessage.style.display = 'none', 5000);
-                });
-            }
-
-            // --- LOGIKA LOAD & DISPLAY PESANAN ---
-            const loadOrders = async () => {
-                if (!ordersTableBody) return;
-                
-                ordersTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Memuat data...</td></tr>';
-
-                if (!_supabase) return;
-
-                try {
-                    const { data: orders, error } = await _supabase
-                        .from('orders')
-                        .select('*')
-                        .order('create_at', { ascending: false }); // Urutkan pesanan terbaru di atas
-
-                    if (error) {
-                        ordersTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 20px;">Gagal memuat pesanan: ${error.message}</td></tr>`;
-                        return;
-                    }
-
-                    if (!orders || orders.length === 0) {
-                        ordersTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 20px; color: var(--gray);">Belum ada pesanan masuk.</td></tr>`;
-                        return;
-                    }
-
-                    ordersTableBody.innerHTML = orders.map(order => {
-                        let statusColor;
-                        if (order.status === 'Selesai') statusColor = '#10b981';
-                        else if (order.status === 'Sedang Dicuci') statusColor = '#facc15';
-                        else statusColor = '#3b82f6'; // Default / Antrian
-
-                        // Perhatikan fungsi updateOrderStatus dipanggil di sini
-                        return `
-                            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
-                                <td style="padding: 12px 15px; font-weight: 700;">${order.id}</td>
-                                <td style="padding: 12px 15px;">${order.nama}</td>
-                                <td style="padding: 12px 15px;">${order.telepon}</td>
-                                <td style="padding: 12px 15px;">${order.barang} (${order.jumlah})</td>
-                                <td style="padding: 12px 15px; color: ${statusColor}; font-weight: 600;">${order.status}</td>
-                                <td style="padding: 12px 15px;">
-                                    <select onchange="window.updateOrderStatus('${order.id}', this.value)" style="padding: 8px; border-radius: 6px; background: #22252d; color: #fff; border: 1px solid rgba(255, 255, 255, 0.12);">
-                                        <option value="Antrian" ${order.status === 'Antrian' ? 'selected' : ''}>Antrian</option>
-                                        <option value="Sedang Dicuci" ${order.status === 'Sedang Dicuci' ? 'selected' : ''}>Sedang Dicuci</option>
-                                        <option value="Selesai" ${order.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
-                                    </select>
-                                </td>
-                            </tr>
-                        `;
-                    }).join('');
-
-                } catch (err) {
-                    ordersTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 20px;">Terjadi kesalahan memuat data.</td></tr>`;
-                    console.error(err);
-                }
-            };
-
-            // --- FUNGSI UPDATE STATUS (Global Scope) ---
-            // Kita pasang di window object supaya bisa diakses oleh onchange di HTML string
-            window.updateOrderStatus = async (id, newStatus) => {
-                if (!_supabase) return;
-
-                try {
-                    const { error } = await _supabase
-                        .from('orders')
-                        .update({ status: newStatus })
-                        .eq('id', id);
-
-                    if (error) {
-                        alert('Gagal update status: ' + error.message);
-                    } else {
-                        console.log(`Status Order ${id} berhasil diupdate menjadi ${newStatus}`);
-                        loadOrders(); // Refresh tabel untuk update tampilan warna status dsb.
-                    }
-                } catch (err) {
-                    alert('Terjadi kesalahan saat update status.');
-                    console.error(err);
-                }
-            };
-
-            // --- INISIALISASI ---
-            if (isAuthenticated()) {
+            // --- CEK LOGIN ---
+            if (localStorage.getItem('isAdminLoggedIn') === 'true') {
                 showDashboard(true);
                 loadOrders();
             } else {
                 showDashboard(false);
             }
 
-            if (loginButton) loginButton.addEventListener('click', handleLogin);
-            if (logoutButton) logoutButton.addEventListener('click', handleLogout);
+            function showDashboard(show) {
+                loginForm.style.display = show ? 'none' : 'block';
+                dashboard.style.display = show ? 'block' : 'none';
+                logoutBtn.style.display = show ? 'block' : 'none';
+            }
+
+            // --- LOGIN ---
+            loginBtn.addEventListener('click', async () => {
+                const u = document.getElementById('username').value;
+                const p = document.getElementById('password').value;
+                
+                const { data } = await _supabase.from('admin').select('*').eq('username', u).single();
+                
+                if (data && data.password === p) {
+                    localStorage.setItem('isAdminLoggedIn', 'true');
+                    location.reload();
+                } else {
+                    msg.textContent = "Username/Password Salah!";
+                    msg.style.display = 'block';
+                }
+            });
+
+            // --- LOGOUT ---
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('isAdminLoggedIn');
+                location.reload();
+            });
+
+            // --- TAMBAH PESANAN (ANTI DOBEL KLIK) ---
+            const addForm = document.getElementById('addOrderForm');
+            addForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = addForm.querySelector('button');
+                const oldText = btn.innerText;
+                btn.disabled = true; btn.innerText = "Menyimpan...";
+
+                const f = new FormData(e.target);
+                const newId = Math.floor(100000 + Math.random() * 900000);
+
+                const { error } = await _supabase.from('orders').insert([{
+                    id: newId,
+                    nama: f.get('nama'),
+                    telepon: f.get('telepon'),
+                    barang: f.get('barang'),
+                    jumlah: f.get('jumlah'),
+                    status: 'Antrian'
+                }]);
+
+                btn.disabled = false; btn.innerText = oldText;
+
+                if (!error) {
+                    showCustomAlert(`✅ Sukses! ID: ${newId}`, 'Sukses');
+                    addForm.reset();
+                    loadOrders();
+                } else {
+                    showCustomAlert(`Gagal: ${error.message}`, 'Error');
+                }
+            });
+
+            // --- MUAT DATA PESANAN + TOMBOL HAPUS ---
+            async function loadOrders() {
+                const tbody = document.querySelector('#ordersTable tbody');
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Memuat...</td></tr>';
+
+                const { data } = await _supabase
+                    .from('orders')
+                    .select('*')
+                    .order('create_at', { ascending: false });
+
+                if (data && data.length > 0) {
+                    tbody.innerHTML = data.map(o => `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <td style="padding:12px;"><b>${o.id}</b></td>
+                            <td style="padding:12px;">${o.nama}</td>
+                            <td style="padding:12px;">${o.telepon}</td>
+                            <td style="padding:12px;">${o.barang} (${o.jumlah})</td>
+                            <td style="padding:12px; font-weight:bold; color:${o.status === 'Selesai' ? '#10b981' : o.status === 'Sedang Dicuci' ? '#facc15' : '#3b82f6'}">
+                                ${o.status}
+                            </td>
+                            <td style="padding:12px; display: flex; align-items: center; gap: 5px;">
+                                <select onchange="window.updateStatus(${o.id}, this.value)" style="background:#222; color:#fff; padding:5px; border-radius:4px; border:1px solid #444;">
+                                    <option value="Antrian" ${o.status === 'Antrian' ? 'selected' : ''}>Antrian</option>
+                                    <option value="Sedang Dicuci" ${o.status === 'Sedang Dicuci' ? 'selected' : ''}>Dicuci</option>
+                                    <option value="Selesai" ${o.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                                </select>
+                                
+                                <button onclick="window.confirmDelete(${o.id})" style="background:#ef4444; color:white; border:none; padding:6px 10px; border-radius:4px; cursor:pointer;" title="Hapus">
+                                    🗑️
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Belum ada data.</td></tr>';
+                }
+            }
+
+            // --- FUNGSI MODAL KUSTOM (PENGGANTI ALERT & CONFIRM) ---
+
+            // 1. Fungsi untuk Notifikasi (Pengganti Alert)
+            function showCustomAlert(message, title = 'Notifikasi') {
+                modalTitle.innerText = title;
+                modalMessage.innerText = message;
+                modalConfirmBtn.innerText = 'OK';
+                modalCancelBtn.style.display = 'none'; // Sembunyikan tombol batal
+                modal.style.display = 'flex';
+            }
+
+            // 2. Fungsi untuk Konfirmasi (Pengganti Confirm)
+            window.confirmDelete = (id) => {
+                deleteId = id; // Simpan ID
+                modalTitle.innerText = 'Konfirmasi Hapus';
+                modalMessage.innerText = `⚠️ Yakin ingin menghapus pesanan ID ${id} permanen?`;
+                modalConfirmBtn.innerText = 'Ya, Hapus';
+                modalCancelBtn.style.display = 'inline-block'; // Tampilkan tombol batal
+                modal.style.display = 'flex';
+            };
+
+            // 3. Event listener untuk tombol modal
+            
+            // Tombol "Batal" atau "OK" (dari alert)
+            modalCancelBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+                deleteId = null;
+            });
+            
+            // Tombol "Konfirmasi" (Ya, Hapus)
+            modalConfirmBtn.addEventListener('click', async () => {
+                // Jika ini adalah konfirmasi hapus (karena deleteId ada isinya)
+                if (deleteId) {
+                    const idToExecute = deleteId;
+                    deleteId = null; // Bersihkan
+                    
+                    const { error } = await _supabase.from('orders').delete().eq('id', idToExecute);
+                    
+                    if (!error) {
+                        showCustomAlert('✅ Data berhasil dihapus.', 'Sukses');
+                        loadOrders();
+                    } else {
+                        showCustomAlert(`Gagal: ${error.message}`, 'Error');
+                    }
+                } 
+                // Jika ini hanya alert biasa (tombol "OK")
+                else {
+                    modal.style.display = 'none';
+                }
+            });
+
+
+            // --- FUNGSI GLOBAL (UPDATE) ---
+            window.updateStatus = async (id, val) => {
+                await _supabase.from('orders').update({ status: val }).eq('id', id);
+                loadOrders();
+            };
+
+            // Ganti deleteOrder lama dengan confirmDelete
+            window.deleteOrder = (id) => {
+                console.warn("deleteOrder() sudah diganti. Gunakan confirmDelete()");
+            };
         });
     </script>
 </body>
