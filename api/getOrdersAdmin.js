@@ -1,12 +1,10 @@
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "./supabase.js";
 
-const supabase = createClient(process.env.DB_URL, process.env.DB_KEY);
-
-export default async function handler(req, res) {
+export async function getOrdersAdmin() {
     const { data } = await supabase
         .from("orders")
         .select("*")
         .order("id", { ascending: false });
 
-    return res.json(data);
+    return data;
 }

@@ -1,55 +1,12 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - WashLabs</title>
+<script type="module">
 
-    <link rel="stylesheet" href="admin.css">
-</head>
-<body>
+import { getOrdersAdmin } from "./api/getOrdersAdmin.js";
+import { addOrder } from "./api/addOrder.js";
+import { updateStatus } from "./api/updateStatus.js";
+import { deleteOrder } from "./api/deleteOrder.js";
 
-<h2>Dashboard Admin</h2>
-
-<div class="input-box">
-    <h3>Tambah Pesanan</h3>
-
-    <input type="text" id="nama" placeholder="Nama pelanggan">
-    <input type="text" id="telpon" placeholder="Nomor telepon">
-    <input type="text" id="barang" placeholder="Nama barang">
-    <input type="number" id="jumlah" placeholder="Jumlah barang">
-
-    <select id="status">
-        <option value="Menunggu Antrian">Menunggu Antrian</option>
-        <option value="Sedang Dicuci">Sedang Dicuci</option>
-        <option value="Selesai">Selesai</option>
-    </select>
-
-    <button onclick="addOrder()">Tambah</button>
-</div>
-
-<table>
-    <thead>
-        <tr>
-            <th>Nama</th>
-            <th>Telpon</th>
-            <th>Barang</th>
-            <th>Jumlah</th>
-            <th>Status</th>
-            <th>Aksi</th>
-        </tr>
-    </thead>
-
-    <tbody id="ordersTable"></tbody>
-</table>
-
-<script>
-// ========================
-//   LOAD DATA ADMIN 
-// ========================
 async function loadOrders() {
-    const res = await fetch("/api/getOrdersAdmin");
-    const data = await res.json();
+    const data = await getOrdersAdmin();
 
     const table = document.getElementById("ordersTable");
     table.innerHTML = "";
@@ -63,66 +20,41 @@ async function loadOrders() {
                 <td>${order.jumlah}</td>
 
                 <td>
-                    <select onchange="updateStatus('${order.id}', this.value)">
-                        <option value="Menunggu Antrian" ${order.status === "Menunggu Antrian" ? "selected" : ""}>Menunggu Antrian</option>
-                        <option value="Sedang Dicuci" ${order.status === "Sedang Dicuci" ? "selected" : ""}>Sedang Dicuci</option>
-                        <option value="Selesai" ${order.status === "Selesai" ? "selected" : ""}>Selesai</option>
+                    <select onchange="changeStatus(${order.id}, this.value)">
+                        <option ${order.status === "Menunggu Antrian" ? "selected" : ""}>Menunggu Antrian</option>
+                        <option ${order.status === "Sedang Dicuci" ? "selected" : ""}>Sedang Dicuci</option>
+                        <option ${order.status === "Selesai" ? "selected" : ""}>Selesai</option>
                     </select>
                 </td>
 
                 <td>
-                    <button onclick="deleteOrder('${order.id}')">Hapus</button>
+                    <button onclick="hapus(${order.id})">Hapus</button>
                 </td>
             </tr>
         `;
     });
 }
 
-// ========================
-//   TAMBAH ORDER
-// ========================
-async function addOrder() {
+window.changeStatus = async function(id, status) {
+    await updateStatus(id, status);
+};
+
+window.hapus = async function(id) {
+    await deleteOrder(id);
+    loadOrders();
+};
+
+window.addOrder = async function() {
     const nama = document.getElementById("nama").value;
     const telpon = document.getElementById("telpon").value;
     const barang = document.getElementById("barang").value;
     const jumlah = document.getElementById("jumlah").value;
     const status = document.getElementById("status").value;
 
-    await fetch("/api/addOrder", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nama, telpon, barang, jumlah, status })
-    });
-
+    await addOrder(nama, telpon, barang, jumlah, status);
     loadOrders();
-}
-
-// ========================
-//   UPDATE STATUS
-// ========================
-async function updateStatus(id, status) {
-    await fetch("/api/updateStatus", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, status })
-    });
-}
-
-// ========================
-//   HAPUS ORDER
-// ========================
-async function deleteOrder(id) {
-    await fetch("/api/deleteOrder", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id })
-    });
-
-    loadOrders();
-}
+};
 
 loadOrders();
-</script>
 
-</body>
-</html>
+</script>
