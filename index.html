@@ -5,60 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WashLabs.ind | Premium shoes_canvas, Helmet & Cap Care</title>
 
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <!-- ========== HEADER ========== -->
-   <header class="header">
+  <header class="header">
     <nav class="navbar">
       <div class="logo">WASHLABS.<span>INDONESIA</span></div>
 
       <button class="menu-btn" id="menu-toggle" aria-label="Menu">☰</button>
 
-     <ul class="nav-links" id="nav-links">
+      <ul class="nav-links" id="nav-links">
         <li><a href="#pricelist">Pricelist</a></li>
         <li><a href="#calculator">Kalkulator</a></li>
         <li><a href="#tips">Tips</a></li>
         <li><a href="tracking.html">Tracking</a></li>
         <li><a href="#gallery">Gallery</a></li>
         <li><a href="#contact">Kontak</a></li>
-        </ul>
-
-        <ul id="nav-links">
-
-  <!-- Tombol reset admin akan muncul di sini -->
-</ul>
-
-        <li>
-         </button>
-        </li>
       </ul>
-    </nav>
+      
+      </nav>
   </header>
 
-<!-- ========== HERO ========== -->
 <section id="home" class="hero">
   <div class="overlay"></div>
   <div class="container hero-content">
     
-    <!-- Judul -->
     <h1 data-animate>WASHLABS</h1>
 
-    <!-- Deskripsi -->
     <p data-animate>
       Karena setiap langkah dan perjalanan Anda pantas tampil bersih. 
       Cuci, rawat, dan segarkan perlengkapan favorit Anda di WashLabs.
     </p>
 
 
-    <!-- 🔥 PROMO BAR -->
     <div class="btn" data-animate>
       🎁 <strong>PROMO:</strong> Cuci <strong>2 Item</strong> dapat kesempatan 
       <strong>Spin Diskon</strong> eksklusif WashLabs!
@@ -69,7 +53,6 @@
 
 
 
-  <!-- ========== PRICELIST ========== -->
   <section id="pricelist" class="section pricelist">
     <div class="container">
       <h2 class="section-title">📋 Pricelist Lengkap</h2>
@@ -88,7 +71,6 @@
     </div>
   </section>
 
-  <!-- ========== KALKULATOR ESTIMASI ========== -->
   <section id="calculator" class="section calculator">
     <div class="container">
       <h2 class="section-title">💰 Estimasi Harga Cepat</h2>
@@ -99,33 +81,33 @@
           <div class="calc-box">
             <h3>👞 Sepatu</h3>
             <label>Cleaning Canvas/Kulit (Rp25.000)</label>
-            <input type="number" name="shoes_canvas" min="0" value="0" />
+            <input type="number" name="shoes_canvas" data-price="25000" min="0" value="0" />
             <label>Cleaning + Suede 50% (Rp35.000)</label>
-            <input type="number" name="shoes_suede_half" min="0" value="0" />
+            <input type="number" name="shoes_suede_half" data-price="35000" min="0" value="0" />
             <label>Cleaning + Suede Full (Rp50.000)</label>
-            <input type="number" name="shoes_suede_full" min="0" value="0" />
+            <input type="number" name="shoes_suede_full" data-price="50000" min="0" value="0" />
             <label>Unyellowing + Cleaning (Rp50.000)</label>
-            <input type="number" name="shoes_unyellow" min="0" value="0" />
+            <input type="number" name="shoes_unyellow" data-price="50000" min="0" value="0" />
             <label>Retouch + Cleaning (Rp70.000)</label>
-            <input type="number" name="shoes_retouch" min="0" value="0" />
+            <input type="number" name="shoes_retouch" data-price="70000" min="0" value="0" />
           </div>
 
           <div class="calc-box">
             <h3>🪖 Helm</h3>
             <label>Cleaning (Rp30.000)</label>
-            <input type="number" name="helm_clean" min="0" value="0" />
+            <input type="number" name="helm_clean" data-price="30000" min="0" value="0" />
             <label>Detailing Half Face (Rp50.000)</label>
-            <input type="number" name="helm_half" min="0" value="0" />
+            <input type="number" name="helm_half" data-price="50000" min="0" value="0" />
             <label>Detailing Full Face (Rp60.000)</label>
-            <input type="number" name="helm_full" min="0" value="0" />
+            <input type="number" name="helm_full" data-price="60000" min="0" value="0" />
           </div>
 
           <div class="calc-box">
             <h3>🧢 Topi</h3>
             <label>Cleaning (Rp15.000)</label>
-            <input type="number" name="topi_clean" min="0" value="0" />
+            <input type="number" name="topi_clean" data-price="15000" min="0" value="0" />
             <label>Retouch + Cleaning (Rp50.000)</label>
-            <input type="number" name="topi_retouch" min="0" value="0" />
+            <input type="number" name="topi_retouch" data-price="50000" min="0" value="0" />
           </div>
         </div>
 
@@ -136,7 +118,6 @@
     </div>
   </section>
 
-  <!-- ========== TIPS ========== -->
   <section id="tips" class="section tips">
     <div class="container">
       <h2 class="section-title">🧠 Tips & Trik Perawatan Profesional</h2>
@@ -182,28 +163,23 @@
     </div>
   </section>
 
-    <!-- =========================
-       SPIN DISKON
-  ========================== -->
-<!-- Tombol Mengambang -->
-<button id="spinOpen" class="floating-spin-btn">🎁 Spin Diskon</button>
+    <button id="spinOpen" class="floating-spin-btn">🎁 Spin Diskon</button>
 
-<!-- Modal Spin -->
 <div id="spinModal" class="spin-modal">
   <div id="spinBackdrop" class="spin-backdrop"></div>
   <div class="spin-content">
-    <button id="closeSpin" class="close-btn">&times;</button>
+    <button id="closeSpin" class="close-btn">×</button>
     <h2>Menangkan Diskon!</h2>
     <p>Coba keberuntunganmu dan dapatkan kupon potongan eksklusif dari WashLabs!</p>
 
     <div class="wheel-container">
       <div id="wheel" class="wheel">
-        <div class="segment seg1">15%</div>
-        <div class="segment seg2">5%</div>
-        <div class="segment seg3">25%</div>
-        <div class="segment seg4">5%</div>
-        <div class="segment seg5">10%</div>
-        <div class="segment seg6">ZONK</div>
+        <div class="segment seg1" data-value="15">15%</div>
+        <div class="segment seg2" data-value="5">5%</div>
+        <div class="segment seg3" data-value="25">25%</div>
+        <div class="segment seg4" data-value="5">5%</div>
+        <div class="segment seg5" data-value="10">10%</div>
+        <div class="segment seg6" data-value="0">ZONK</div>
       </div>
       <div class="pointer"></div>
     </div>
@@ -220,7 +196,6 @@
 
 
 
-  <!-- ========== GALLERY ========== -->
   <section id="gallery" class="section gallery">
     <div class="container">
       <h2 class="section-title">📸 Gallery Sebelum & Sesudah</h2>
@@ -233,7 +208,6 @@
     </div>
   </section>
 
-  <!-- ========== KONTAK ========== -->
   <section id="contact" class="section contact">
     <div class="container">
       <h2 class="section-title">📞 Kontak Kami</h2>
@@ -241,22 +215,19 @@
       <div class="contact-buttons">
         <a href="https://wa.me/6281770070490" class="btn">💬 WhatsApp</a>
         <a href="https://instagram.com/washlabs.ind" class="btn">📷 Instagram</a>
-        <a href="https://maps.app.goo.gl/NYMZw7D8arMYxjxr7" class="btn">📍 Google Maps</a>
+        <a href="https://maps.app.goo.gl/NYMZw7D8arMYxjxr7" class="btn">📍 Google Maps</a> 
       </div>
     </div>
   </section>
 
-  <!-- ========== FOOTER ========== -->
   <footer class="footer">
-    <p>&copy; 2025 WashLabs.indonesia | Premium Shoes, Bag & Helmet Care</p>
+    <p>© 2025 WashLabs.indonesia | Premium Shoes, Bag & Helmet Care</p>
   </footer>
 
-  <!-- WhatsApp Floating Button -->
   <a href="https://wa.me/6281770070490" class="wa-float" target="_blank" rel="noopener">
     <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp" />
   </a>
 
-  <!-- JS -->
   <script src="script.js"></script>
 </body>
 </html>

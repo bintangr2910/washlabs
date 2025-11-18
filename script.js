@@ -12,25 +12,86 @@ const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 window.supabaseClient = _supabase; 
 
 /* =======================================
+   FUNGSI GLOBAL (ADMIN) - DIPERBAIKI: DIPINDAHKAN KE SCOPE GLOBAL
+   Ini memastikan fungsi loadOrders dan updateStatus dapat diakses 
+   oleh onchange di HTML dan logika login/tambah pesanan admin.
+======================================= */
+
+// --- FUNGSI MUAT DATA PESANAN (ADMIN) ---
+async function loadOrders() {
+    const tbody = document.querySelector('#ordersTable tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Memuat Data...</td></tr>';
+    
+    const { data } = await _supabase
+        .from('orders')
+        .select('*')
+        .order('create_at', { ascending: false });
+
+    if (data && data.length > 0) {
+        tbody.innerHTML = data.map(o => `
+            <tr>
+                <td data-label="ID"><b>${o.id}</b></td>
+                <td data-label="Nama">${o.nama}</td>
+                <td data-label="HP">${o.telepon}</td>
+                <td data-label="Barang">${o.barang} (${o.jumlah})</td>
+                <td data-label="Status" style="color:${o.status === 'Selesai' ? '#10b981' : o.status === 'Sedang Dicuci' ? '#facc15' : '#3b82f6'}">
+                    ${o.status}
+                </td>
+                <td data-label="Aksi">
+                    <select onchange="updateStatus(${o.id}, this.value)" style="background:#222; color:#fff; padding:5px; border-radius:4px;">
+                        <option value="Antrian" ${o.status === 'Antrian' ? 'selected' : ''}>Antrian</option>
+                        <option value="Sedang Dicuci" ${o.status === 'Sedang Dicuci' ? 'selected' : ''}>Dicuci</option>
+                        <option value="Selesai" ${o.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                    </select>
+                </td>
+            </tr>
+        `).join('');
+    } else {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Belum ada pesanan.</td></tr>';
+    }
+}
+window.loadOrders = loadOrders;
+
+// Ekspos fungsi updateStatus ke window agar bisa dipanggil oleh onchange di HTML
+window.updateStatus = async (id, val) => {
+    const { error } = await _supabase.from('orders').update({ status: val }).eq('id', id);
+    if(!error) {
+        console.log(`Order ${id} updated to ${val}`);
+        loadOrders(); // Refresh tabel
+    } else {
+        alert("Gagal update status");
+    }
+};
+
+/* =======================================
    2. LOGIKA UTAMA (Jalan saat web dimuat)
 ======================================= */
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- A. NAVIGASI, MENU MOBILE & RESET ADMIN ---
+    // --- A. NAVIGASI, MENU MOBILE & RESET ADMIN (GARIS TIGA) ---
     const menuBtn = document.getElementById("menu-toggle");
     const navLinks = document.getElementById("nav-links");
     const adminPassword = "washlabsadmin"; // Password Reset Spin
     let adminMenuShown = localStorage.getItem("washlabs_admin_logged") === "true";
 
-    // Toggle Menu Mobile
+    // ✅ PERBAIKAN: Toggle Menu Mobile (GARIS TIGA)
     if (menuBtn && navLinks) {
         menuBtn.addEventListener("click", () => {
             navLinks.classList.toggle("active");
         });
+        // Tambahkan event listener agar menu tertutup saat link diklik
+        const links = navLinks.querySelectorAll('a');
+        links.forEach(link => {
+            link.addEventListener('click', function() {
+                // Memberikan sedikit jeda visual sebelum menu hilang
+                setTimeout(() => navLinks.classList.remove('active'), 300); 
+            });
+        });
     }
 
     // Tombol Reset Spin (Fitur Tersembunyi Admin)
-    // Mencari link "Kontak" untuk menyelipkan tombol reset di sebelahnya
     const navItems = Array.from(document.querySelectorAll(".nav-links li"));
     const kontakLi = navItems.find(li => li.textContent.includes("Kontak") || li.querySelector('a')?.getAttribute('href') === "#contact");
 
@@ -38,22 +99,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const resetLi = document.createElement("li");
         resetLi.innerHTML = `<a href="javascript:void(0)" class="admin-reset-btn" style="color:#ef4444; font-weight:bold;">Reset Spin 🔄</a>`;
         
-        // Tampilkan tombol jika admin sudah pernah login
         resetLi.style.display = adminMenuShown ? "block" : "none";
         
         resetLi.addEventListener("click", () => {
             const input = prompt("Masukkan password admin untuk Reset Spin:");
             if (input === adminPassword) {
                 localStorage.setItem("washlabs_admin_logged", "true");
-                resetLi.style.display = "block"; // Pastikan tetap muncul
-                localStorage.removeItem("spin_done_hash"); // Hapus history spin
+                resetLi.style.display = "block";
+                localStorage.removeItem("spin_done_hash"); 
                 alert("✅ Sukses! User sekarang bisa melakukan Spin lagi.");
+                // Jika tombol spin sudah di-disable, aktifkan kembali
+                const spinButton = document.getElementById("spinButton");
+                if (spinButton) {
+                    spinButton.disabled = false;
+                    spinButton.textContent = "PUTAR";
+                    document.getElementById("resultText").innerHTML = "";
+                }
             } else if (input) {
                 alert("❌ Password salah!");
             }
         });
-        
-        // Masukkan tombol ke menu
         kontakLi.insertAdjacentElement('afterend', resetLi);
     }
 
@@ -79,13 +144,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- C. SPIN WHEEL (Halaman Utama) ---
+    // --- C. SPIN WHEEL (TOMBOL SPIN DISKON DI BAWAH) ---
+    // ✅ PERBAIKAN: Deklarasi variabel spin modal dipindahkan ke sini
     const spinButton = document.getElementById("spinButton");
-    if (spinButton) {
-        const wheel = document.getElementById("wheel");
-        const resultText = document.getElementById("resultText");
-        const spinModal = document.getElementById("spinModal");
-        const SPIN_KEY = "spin_done_hash";
+    const wheel = document.getElementById("wheel");
+    const resultText = document.getElementById("resultText");
+    const spinModal = document.getElementById("spinModal"); 
+    const SPIN_KEY = "spin_done_hash";
+
+    const spinOpenBtn = document.getElementById("spinOpen"); // Tombol floating
+    const closeSpinBtn = document.getElementById("closeSpin");
+    const spinBackdrop = document.getElementById("spinBackdrop");
+
+    // ✅ PERBAIKAN: Event Buka/Tutup Modal (Sekarang spinModal terdefinisi)
+    if (spinOpenBtn && spinModal) {
+        spinOpenBtn.addEventListener("click", () => spinModal.classList.add("active"));
+    }
+    closeSpinBtn?.addEventListener("click", () => spinModal.classList.remove("active"));
+    spinBackdrop?.addEventListener("click", () => spinModal.classList.remove("active"));
+    
+    
+    // Logika Spin Putaran (Hanya dijalankan jika tombol spin di dalam modal ada)
+    if (spinButton && wheel && resultText) {
         
         // Cek apakah user sudah pernah spin
         if (localStorage.getItem(SPIN_KEY)) {
@@ -93,18 +173,21 @@ document.addEventListener('DOMContentLoaded', () => {
             spinButton.textContent = "Sudah Spin";
         }
 
-        // Event Buka/Tutup Modal
-        document.getElementById("spinOpen")?.addEventListener("click", () => spinModal.classList.add("active"));
-        document.getElementById("closeSpin")?.addEventListener("click", () => spinModal.classList.remove("active"));
-        document.getElementById("spinBackdrop")?.addEventListener("click", () => spinModal.classList.remove("active"));
-
         // Logika Putaran
         spinButton.addEventListener("click", () => {
             if (localStorage.getItem(SPIN_KEY)) return;
             
             const sectors = ["15%", "5%", "25%", "5%", "10%", "ZONK"];
-            // Manipulasi peluang: 70% kemungkinan jatuh di ZONK atau diskon kecil
-            const randomIdx = Math.random() < 0.7 ? 5 : Math.floor(Math.random() * 5); 
+            
+            // Logika peluang yang lebih baik (70% kecil/ZONK, 30% besar)
+            let randomIdx;
+            if (Math.random() < 0.7) { 
+                const smallResults = [1, 3, 5]; // 5%, 5%, ZONK
+                randomIdx = smallResults[Math.floor(Math.random() * smallResults.length)];
+            } else { 
+                const bigResults = [0, 2, 4]; // 15%, 25%, 10%
+                randomIdx = bigResults[Math.floor(Math.random() * bigResults.length)];
+            }
             
             const degPerSegment = 360 / 6;
             // Hitung sudut: 5 putaran penuh + sudut segmen target
@@ -196,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loginForm.style.display = 'none';
             dashboard.style.display = 'block';
             logoutBtn.style.display = 'block';
-            loadOrders(); // Panggil fungsi muat data
+            window.loadOrders(); // Panggil fungsi muat data global
         }
 
         // --- FUNGSI LOGIN ---
@@ -250,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     notif.style.display = 'block';
                     notif.style.color = '#10b981';
                     e.target.reset();
-                    loadOrders(); // Refresh tabel
+                    window.loadOrders(); // Refresh tabel
                 } else {
                     notif.textContent = "Gagal: " + error.message;
                     notif.style.display = 'block';
@@ -259,55 +342,4 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
-
-    // --- FUNGSI MUAT DATA PESANAN (ADMIN) ---
-    async function loadOrders() {
-        const tbody = document.querySelector('#ordersTable tbody');
-        if (!tbody) return;
-
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Memuat Data...</td></tr>';
-        
-        const { data } = await _supabase
-            .from('orders')
-            .select('*')
-            .order('create_at', { ascending: false });
-
-        if (data && data.length > 0) {
-            tbody.innerHTML = data.map(o => `
-                <tr>
-                    <td data-label="ID"><b>${o.id}</b></td>
-                    <td data-label="Nama">${o.nama}</td>
-                    <td data-label="HP">${o.telepon}</td>
-                    <td data-label="Barang">${o.barang} (${o.jumlah})</td>
-                    <td data-label="Status" style="color:${o.status === 'Selesai' ? '#10b981' : o.status === 'Sedang Dicuci' ? '#facc15' : '#3b82f6'}">
-                        ${o.status}
-                    </td>
-                    <td data-label="Aksi">
-                        <select onchange="updateStatus(${o.id}, this.value)" style="background:#222; color:#fff; padding:5px; border-radius:4px;">
-                            <option value="Antrian" ${o.status === 'Antrian' ? 'selected' : ''}>Antrian</option>
-                            <option value="Sedang Dicuci" ${o.status === 'Sedang Dicuci' ? 'selected' : ''}>Dicuci</option>
-                            <option value="Selesai" ${o.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
-                        </select>
-                    </td>
-                </tr>
-            `).join('');
-        } else {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Belum ada pesanan.</td></tr>';
-        }
-    }
-
-    // Ekspos fungsi updateStatus ke window agar bisa dipanggil oleh onchange di HTML
-    window.updateStatus = async (id, val) => {
-        const { error } = await _supabase.from('orders').update({ status: val }).eq('id', id);
-        if(!error) {
-            // Opsional: beri notifikasi kecil atau refresh tabel
-            // loadOrders(); // Refresh otomatis jika diinginkan
-            console.log(`Order ${id} updated to ${val}`);
-            // Ganti warna text status secara langsung biar cepat (opsional)
-            loadOrders(); 
-        } else {
-            alert("Gagal update status");
-        }
-    };
-
 });
