@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | WashLabs.ind</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <a href="index.html" class="logo">WASHLABS.<span>ADMIN</span></a>
+            <button id="logoutButton" class="btn" style="background-color: #ef4444; display: none;">Logout</button>
+        </nav>
+    </header>
+
+    <section class="section calculator" style="min-height: 80vh;">
+        <div id="login-form" class="container" style="max-width: 400px; padding-top: 50px;">
+            <h2 class="section-title">🔑 Admin Login</h2>
+            <div class="calc-box">
+                <label for="username">Username:</label>
+                <input type="text" id="username" required>
+                <label for="password" style="margin-top: 15px;">Password:</label>
+                <input type="password" id="password" required>
+                <button id="loginButton" class="spin-btn" style="margin-top: 25px; width: 100%;">Login</button>
+                <p id="loginMessage" class="note" style="margin-top: 15px; color: #ef4444; display: none;"></p>
+            </div>
+        </div>
+
+        <div id="admin-dashboard" class="container" style="display: none; max-width: 1200px;">
+            <h2 class="section-title">📊 Dashboard Pesanan</h2>
+            <p id="greeting" class="section-subtitle">Selamat datang, Admin!</p>
+
+            <div class="calc-box" style="max-width: 800px; margin: 30px auto; text-align: left;">
+                <h3>➕ Tambah Pesanan Baru</h3>
+                <form id="addOrderForm">
+                    <label>Nama Pelanggan:</label>
+                    <input type="text" name="nama" required>
+                    <label>Nomor Telepon:</label>
+                    <input type="text" name="telepon" required>
+                    <label>Deskripsi Barang:</label>
+                    <input type="text" name="barang" placeholder="Ex: Sepatu Canvas Putih, Helm Half Face" required>
+                    <label>Jumlah Item:</label>
+                    <input type="number" name="jumlah" min="1" value="1" required>
+                    <button type="submit" class="spin-btn" style="margin-top: 20px;">Simpan Pesanan</button>
+                    <p id="addMessage" class="note" style="margin-top: 10px; color: #10b981; display: none;"></p>
+                </form>
+            </div>
+
+            <div style="margin-top: 50px; overflow-x: auto;">
+                <table id="ordersTable" style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead>
+                        <tr style="background: var(--accent); color: var(--primary);">
+                            <th style="padding: 12px 15px;">ID</th>
+                            <th style="padding: 12px 15px;">Nama</th>
+                            <th style="padding: 12px 15px;">Telepon</th>
+                            <th style="padding: 12px 15px;">Barang</th>
+                            <th style="padding: 12px 15px;">Status</th>
+                            <th style="padding: 12px 15px;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>© 2025 WashLabs.indonesia</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const _supabase = window.supabaseClient;
+            const loginForm = document.getElementById('login-form');
+            const adminDashboard = document.getElementById('admin-dashboard');
+            const loginButton = document.getElementById('loginButton');
+            const logoutButton = document.getElementById('logoutButton');
+            const loginMessage = document.getElementById('loginMessage');
+            const addOrderForm = document.getElementById('addOrderForm');
+            const ordersTableBody = document.querySelector('#ordersTable tbody');
+            const addMessage = document.getElementById('addMessage');
+
+            // --- FUNGSI UTILITY ---
+            const isAuthenticated = () => localStorage.getItem('isAdminLoggedIn') === 'true';
+            const showDashboard = (show) => {
+                loginForm.style.display = show ? 'none' : 'block';
+                adminDashboard.style.display = show ? 'block' : 'none';
+                logoutButton.style.display = show ? 'block' : 'none';
+            };
+
+            // --- LOGIKA LOGIN ---
+            const handleLogin = async () => {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                loginMessage.style.display = 'none';
+
+                // Cari user di tabel 'admin'
+                const { data, error } = await _supabase
+                    .from('admin')
+                    .select('username, password')
+                    .eq('username', username)
+                    .single();
+
+                if (error || !data) {
+                    loginMessage.textContent = 'Username atau password salah!';
+                    loginMessage.style.display = 'block';
+                    return;
+                }
+                
+                // Peringatan: Dalam aplikasi nyata, password HARUS DIHASH
+                // Cek password (Saat ini hanya cek string biasa, HARUS DIGANTI)
+                if (password === data.password) {
+                    localStorage.setItem('isAdminLoggedIn', 'true');
+                    showDashboard(true);
+                    loadOrders();
+                } else {
+                    loginMessage.textContent = 'Username atau password salah!';
+                    loginMessage.style.display = 'block';
+                }
+            };
+
+            // --- LOGIKA LOGOUT ---
+            const handleLogout = () => {
+                localStorage.removeItem('isAdminLoggedIn');
+                showDashboard(false);
+            };
+
+            // --- LOGIKA TAMBAH PESANAN ---
+            addOrderForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(addOrderForm);
+                const newOrder = {
+                    nama: formData.get('nama'),
+                    telepon: formData.get('telepon'),
+                    barang: formData.get('barang'),
+                    jumlah: parseInt(formData.get('jumlah')),
+                    status: 'Antrian', // Status awal
+                    create_at: new Date().toISOString()
+                };
+
+                const { data, error } = await _supabase
+                    .from('orders')
+                    .insert([newOrder])
+                    .select();
+
+                if (error) {
+                    addMessage.textContent = 'Gagal menyimpan pesanan: ' + error.message;
+                    addMessage.style.color = '#ef4444';
+                } else {
+                    addMessage.textContent = `✅ Pesanan untuk ${newOrder.nama} berhasil ditambahkan! ID: ${data[0].id}`;
+                    addMessage.style.color = '#10b981';
+                    addOrderForm.reset();
+                    loadOrders(); // Muat ulang daftar
+                }
+                addMessage.style.display = 'block';
+                setTimeout(() => addMessage.style.display = 'none', 5000);
+            });
+            
+            // --- LOGIKA LOAD & DISPLAY PESANAN ---
+            const loadOrders = async () => {
+                ordersTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Memuat data...</td></tr>';
+
+                const { data: orders, error } = await _supabase
+                    .from('orders')
+                    .select('*')
+                    .order('create_at', { ascending: false }); // Pesanan terbaru di atas
+
+                if (error) {
+                    ordersTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 20px;">Gagal memuat pesanan: ${error.message}</td></tr>`;
+                    return;
+                }
+
+                if (orders.length === 0) {
+                     ordersTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 20px; color: var(--gray);">Belum ada pesanan masuk.</td></tr>`;
+                     return;
+                }
+
+                ordersTableBody.innerHTML = orders.map(order => {
+                    let statusColor;
+                    if (order.status === 'Selesai') statusColor = '#10b981';
+                    else if (order.status === 'Sedang Dicuci') statusColor = '#facc15';
+                    else statusColor = '#3b82f6';
+
+                    return `
+                        <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+                            <td style="padding: 12px 15px; font-weight: 700;">${order.id}</td>
+                            <td style="padding: 12px 15px;">${order.nama}</td>
+                            <td style="padding: 12px 15px;">${order.telepon}</td>
+                            <td style="padding: 12px 15px;">${order.barang} (${order.jumlah})</td>
+                            <td style="padding: 12px 15px; color: ${statusColor}; font-weight: 600;">${order.status}</td>
+                            <td style="padding: 12px 15px;">
+                                <select onchange="updateOrderStatus(${order.id}, this.value)" style="padding: 8px; border-radius: 6px; background: #22252d; color: #fff; border: 1px solid rgba(255, 255, 255, 0.12);">
+                                    <option value="Antrian" ${order.status === 'Antrian' ? 'selected' : ''}>Antrian</option>
+                                    <option value="Sedang Dicuci" ${order.status === 'Sedang Dicuci' ? 'selected' : ''}>Sedang Dicuci</option>
+                                    <option value="Selesai" ${order.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                                </select>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            };
+
+            // Tambahkan fungsi ini ke window agar bisa dipanggil dari HTML (select onchange)
+            window.updateOrderStatus = async (id, newStatus) => {
+                 const { error } = await _supabase
+                    .from('orders')
+                    .update({ status: newStatus })
+                    .eq('id', id);
+
+                if (error) {
+                    alert('Gagal update status: ' + error.message);
+                } else {
+                    // Tidak perlu reload penuh, cukup beri notifikasi
+                    console.log(`Status Order ${id} berhasil diupdate menjadi ${newStatus}`);
+                    loadOrders(); // Refresh table
+                }
+            };
+            
+            // --- INISIALISASI ---
+            if (isAuthenticated()) {
+                showDashboard(true);
+                loadOrders();
+            } else {
+                showDashboard(false);
+            }
+
+            loginButton.addEventListener('click', handleLogin);
+            logoutButton.addEventListener('click', handleLogout);
+        });
+    </script>
+</body>
+</html>
