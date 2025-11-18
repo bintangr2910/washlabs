@@ -5,18 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tracking Pesanan - WashLabs</title>
 
-    <link rel="stylesheet" href="tracking.css">
+    <link rel="stylesheet" href="css/tracking.css">
 </head>
 <body>
 
-<h2>Status Pesanan Saya</h2>
+<h2>Status Pesanan</h2>
 
 <table>
     <thead>
         <tr>
             <th>Nama</th>
-            <th>Berat</th>
-            <th>Jenis</th>
+            <th>Jumlah</th>
             <th>Status</th>
         </tr>
     </thead>
@@ -36,8 +35,7 @@ async function loadUserOrders() {
         table.innerHTML += `
             <tr>
                 <td>${order.nama}</td>
-                <td>${order.berat} kg</td>
-                <td>${order.jenis}</td>
+                <td>${order.jumlah}</td>
                 <td>${order.status}</td>
             </tr>
         `;

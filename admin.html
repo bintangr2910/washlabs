@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - WashLabs</title>
 
-    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
 
@@ -14,10 +14,14 @@
 <div class="input-box">
     <h3>Tambah Pesanan</h3>
 
-    <input type="text" id="nama" placeholder="Nama pelanggan">
-    <input type="text" id="alamat" placeholder="Alamat">
-    <input type="number" id="berat" placeholder="Berat (kg)">
-    <input type="text" id="jenis" placeholder="Jenis cucian">
+    <input type="text" id="nama" placeholder="Nama barang / pelanggan">
+    <input type="number" id="jumlah" placeholder="Jumlah barang">
+
+    <select id="status">
+        <option value="Menunggu Antrian">Menunggu Antrian</option>
+        <option value="Sedang Dicuci">Sedang Dicuci</option>
+        <option value="Selesai">Selesai</option>
+    </select>
 
     <button onclick="addOrder()">Tambah</button>
 </div>
@@ -26,7 +30,7 @@
     <thead>
         <tr>
             <th>Nama</th>
-            <th>Berat</th>
+            <th>Jumlah</th>
             <th>Status</th>
             <th>Aksi</th>
         </tr>
@@ -36,6 +40,9 @@
 </table>
 
 <script>
+// ========================
+//   LOAD DATA ADMIN 
+// ========================
 async function loadOrders() {
     const res = await fetch("/api/getOrdersAdmin");
     const data = await res.json();
@@ -47,11 +54,12 @@ async function loadOrders() {
         table.innerHTML += `
             <tr>
                 <td>${order.nama}</td>
-                <td>${order.berat} kg</td>
+                <td>${order.jumlah}</td>
 
                 <td>
                     <select onchange="updateStatus('${order.id}', this.value)">
-                        <option value="Diproses" ${order.status === "Diproses" ? "selected" : ""}>Diproses</option>
+                        <option value="Menunggu Antrian" ${order.status === "Menunggu Antrian" ? "selected" : ""}>Menunggu Antrian</option>
+                        <option value="Sedang Dicuci" ${order.status === "Sedang Dicuci" ? "selected" : ""}>Sedang Dicuci</option>
                         <option value="Selesai" ${order.status === "Selesai" ? "selected" : ""}>Selesai</option>
                     </select>
                 </td>
@@ -64,21 +72,26 @@ async function loadOrders() {
     });
 }
 
+// ========================
+//   TAMBAH ORDER
+// ========================
 async function addOrder() {
     const nama = document.getElementById("nama").value;
-    const alamat = document.getElementById("alamat").value;
-    const berat = document.getElementById("berat").value;
-    const jenis = document.getElementById("jenis").value;
+    const jumlah = document.getElementById("jumlah").value;
+    const status = document.getElementById("status").value;
 
     await fetch("/api/addOrder", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nama, alamat, berat, jenis })
+        body: JSON.stringify({ nama, jumlah, status })
     });
 
     loadOrders();
 }
 
+// ========================
+//   UPDATE STATUS
+// ========================
 async function updateStatus(id, status) {
     await fetch("/api/updateStatus", {
         method: "POST",
@@ -87,6 +100,9 @@ async function updateStatus(id, status) {
     });
 }
 
+// ========================
+//   HAPUS ORDER
+// ========================
 async function deleteOrder(id) {
     await fetch("/api/deleteOrder", {
         method: "POST",
