@@ -1,0 +1,56 @@
+/* =========================
+   USER TRACKING - WASHLABS THEME
+========================= */
+
+:root {
+  --primary: #1d2026;
+  --accent: #34c2ed;
+  --text: #fff;
+  --gray: #a9b3c1;
+  --card-bg: #262a33;
+  --bg: linear-gradient(90deg, #1d2026, #252932);
+}
+
+body {
+  background: var(--bg);
+  font-family: "Poppins", sans-serif;
+  color: var(--text);
+  padding: 25px;
+}
+
+h2 {
+  text-align: center;
+  color: var(--accent);
+  margin-bottom: 25px;
+  text-transform: uppercase;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card-bg);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+th {
+  background: #15171c;
+  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+td {
+  color: var(--text-light);
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  table { font-size: 0.85rem; }
+}

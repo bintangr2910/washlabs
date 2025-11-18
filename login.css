@@ -1,0 +1,73 @@
+/* =========================
+   LOGIN PAGE - WASHLABS THEME
+========================= */
+
+:root {
+  --primary: #1d2026;
+  --accent: #34c2ed;
+  --text: #fff;
+  --gray: #a9b3c1;
+  --card-bg: #262a33;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --bg: linear-gradient(90deg, #1d2026, #252932);
+}
+
+body {
+  background: var(--bg);
+  font-family: "Poppins", sans-serif;
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-box {
+  background: var(--card-bg);
+  padding: 35px;
+  width: 350px;
+  border-radius: 16px;
+  box-shadow: 0 6px 25px var(--shadow);
+  text-align: center;
+}
+
+.login-box h2 {
+  color: var(--accent);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: #20232a;
+  color: var(--text);
+  font-size: 1rem;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.login-box input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(0, 195, 255, 0.3);
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background: var(--accent);
+  border: none;
+  border-radius: 10px;
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.3s ease;
+}
+
+.login-box button:hover {
+  transform: scale(1.03);
+}

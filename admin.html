@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - WashLabs</title>
+
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<h2>Dashboard Admin</h2>
+
+<div class="input-box">
+    <h3>Tambah Pesanan</h3>
+
+    <input type="text" id="nama" placeholder="Nama pelanggan">
+    <input type="text" id="alamat" placeholder="Alamat">
+    <input type="number" id="berat" placeholder="Berat (kg)">
+    <input type="text" id="jenis" placeholder="Jenis cucian">
+
+    <button onclick="addOrder()">Tambah</button>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nama</th>
+            <th>Berat</th>
+            <th>Status</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+
+    <tbody id="ordersTable"></tbody>
+</table>
+
+<script>
+async function loadOrders() {
+    const res = await fetch("/api/getOrdersAdmin");
+    const data = await res.json();
+
+    const table = document.getElementById("ordersTable");
+    table.innerHTML = "";
+
+    data.forEach(order => {
+        table.innerHTML += `
+            <tr>
+                <td>${order.nama}</td>
+                <td>${order.berat} kg</td>
+
+                <td>
+                    <select onchange="updateStatus('${order.id}', this.value)">
+                        <option value="Diproses" ${order.status === "Diproses" ? "selected" : ""}>Diproses</option>
+                        <option value="Selesai" ${order.status === "Selesai" ? "selected" : ""}>Selesai</option>
+                    </select>
+                </td>
+
+                <td>
+                    <button onclick="deleteOrder('${order.id}')">Hapus</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+async function addOrder() {
+    const nama = document.getElementById("nama").value;
+    const alamat = document.getElementById("alamat").value;
+    const berat = document.getElementById("berat").value;
+    const jenis = document.getElementById("jenis").value;
+
+    await fetch("/api/addOrder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nama, alamat, berat, jenis })
+    });
+
+    loadOrders();
+}
+
+async function updateStatus(id, status) {
+    await fetch("/api/updateStatus", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status })
+    });
+}
+
+async function deleteOrder(id) {
+    await fetch("/api/deleteOrder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id })
+    });
+
+    loadOrders();
+}
+
+loadOrders();
+</script>
+
+</body>
+</html>

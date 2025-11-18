@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Pesanan - WashLabs</title>
+
+    <link rel="stylesheet" href="css/tracking.css">
+</head>
+<body>
+
+<h2>Status Pesanan Saya</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nama</th>
+            <th>Berat</th>
+            <th>Jenis</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+
+    <tbody id="trackingData"></tbody>
+</table>
+
+<script>
+async function loadUserOrders() {
+    const res = await fetch("/api/getOrdersPublic");
+    const data = await res.json();
+
+    const table = document.getElementById("trackingData");
+    table.innerHTML = "";
+
+    data.forEach(order => {
+        table.innerHTML += `
+            <tr>
+                <td>${order.nama}</td>
+                <td>${order.berat} kg</td>
+                <td>${order.jenis}</td>
+                <td>${order.status}</td>
+            </tr>
+        `;
+    });
+}
+
+loadUserOrders();
+</script>
+
+</body>
+</html>
