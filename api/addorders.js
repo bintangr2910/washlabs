@@ -1,14 +1,13 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
+
 const supabase = createClient(process.env.DB_URL, process.env.DB_KEY);
 
 export default async function handler(req, res) {
-  const { nama, jumlah, status } = req.body;
+    const { nama, jumlah, status } = req.body;
 
-  const { error } = await supabase
-    .from("orders")
-    .insert([{ nama, jumlah, status }]);
+    const { error } = await supabase
+        .from("orders")
+        .insert([{ nama, jumlah, status }]);
 
-  if (error) return res.status(400).json({ error });
-
-  return res.status(200).json({ success: true });
+    return res.json({ success: !error });
 }

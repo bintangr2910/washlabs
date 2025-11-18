@@ -14,7 +14,9 @@
 <div class="input-box">
     <h3>Tambah Pesanan</h3>
 
-    <input type="text" id="nama" placeholder="Nama barang / pelanggan">
+    <input type="text" id="nama" placeholder="Nama pelanggan">
+    <input type="text" id="telpon" placeholder="Nomor telepon">
+    <input type="text" id="barang" placeholder="Nama barang">
     <input type="number" id="jumlah" placeholder="Jumlah barang">
 
     <select id="status">
@@ -30,6 +32,8 @@
     <thead>
         <tr>
             <th>Nama</th>
+            <th>Telpon</th>
+            <th>Barang</th>
             <th>Jumlah</th>
             <th>Status</th>
             <th>Aksi</th>
@@ -54,6 +58,8 @@ async function loadOrders() {
         table.innerHTML += `
             <tr>
                 <td>${order.nama}</td>
+                <td>${order.telpon}</td>
+                <td>${order.barang}</td>
                 <td>${order.jumlah}</td>
 
                 <td>
@@ -77,13 +83,15 @@ async function loadOrders() {
 // ========================
 async function addOrder() {
     const nama = document.getElementById("nama").value;
+    const telpon = document.getElementById("telpon").value;
+    const barang = document.getElementById("barang").value;
     const jumlah = document.getElementById("jumlah").value;
     const status = document.getElementById("status").value;
 
     await fetch("/api/addOrder", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nama, jumlah, status })
+        body: JSON.stringify({ nama, telpon, barang, jumlah, status })
     });
 
     loadOrders();

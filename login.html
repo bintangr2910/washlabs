@@ -19,25 +19,40 @@
     <p id="msg"></p>
 </div>
 
-<script>
+<!-- Import Supabase -->
+<script type="module">
+import { supabase } from "./supabase.js";
+
 async function loginAdmin() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-    const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-        window.location.href = "admin.html";
-    } else {
-        document.getElementById("msg").textContent = "Login gagal";
+    if (!username || !password) {
+        document.getElementById("msg").textContent = "Harap isi semua field.";
+        return;
     }
+
+    // Cek tabel admin sesuai database Supabase
+    const { data, error } = await supabase
+        .from("admin")               // NAMA TABEL
+        .select("*")
+        .eq("username", username)    // KOLOM NAMA SESUAI TABEL
+        .eq("password", password)    // KOLOM PASSWORD SESUAI TABEL
+        .single();
+
+    if (error || !data) {
+        document.getElementById("msg").textContent = "Username atau password salah.";
+        return;
+    }
+
+    // Simpan status login
+    localStorage.setItem("admin_logged", "true");
+
+    // Redirect ke admin dashboard
+    window.location.href = "admin.html";
 }
+
+window.loginAdmin = loginAdmin; // supaya tombol bisa memanggil
 </script>
 
 </body>

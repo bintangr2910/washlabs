@@ -1,22 +1,23 @@
-import { createClient } from '@supabase/supabase-js';
-import bcrypt from "bcryptjs";
+import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(process.env.DB_URL, process.env.DB_KEY);
+const supabase = createClient(
+    process.env.DB_URL,
+    process.env.DB_KEY
+);
 
 export default async function handler(req, res) {
-  const { username, password } = req.body;
+    const { username, password } = req.body;
 
-  const { data: admin } = await supabase
-    .from("admin")
-    .select("*")
-    .eq("username", username)
-    .single();
+    const { data, error } = await supabase
+        .from("admin")
+        .select("*")
+        .eq("username", username)
+        .eq("password", password)
+        .single();
 
-  if (!admin) return res.status(401).json({ error: "Admin tidak ditemukan" });
-
-  const match = await bcrypt.compare(password, admin.password);
-  if (!match) return res.status(401).json({ error: "Password salah" });
-
-  return res.status(200).json({ success: true });
+    if (data) {
+        return res.json({ success: true });
+    } else {
+        return res.json({ success: false });
+    }
 }
-

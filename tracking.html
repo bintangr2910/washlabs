@@ -15,6 +15,7 @@
     <thead>
         <tr>
             <th>Nama</th>
+            <th>Barang</th>
             <th>Jumlah</th>
             <th>Status</th>
         </tr>
@@ -23,10 +24,20 @@
     <tbody id="trackingData"></tbody>
 </table>
 
-<script>
+<script type="module">
+import { supabase } from "./supabase.js";
+
 async function loadUserOrders() {
-    const res = await fetch("/api/getOrdersPublic");
-    const data = await res.json();
+
+    const { data, error } = await supabase
+        .from("pesanan")    // ganti jika nama tabel berbeda
+        .select("*")
+        .order("id", { ascending: false });
+
+    if (error) {
+        console.error(error);
+        return;
+    }
 
     const table = document.getElementById("trackingData");
     table.innerHTML = "";
@@ -34,9 +45,10 @@ async function loadUserOrders() {
     data.forEach(order => {
         table.innerHTML += `
             <tr>
-                <td>${order.nama}</td>
-                <td>${order.jumlah}</td>
-                <td>${order.status}</td>
+                <td>${order.nama ?? "-"}</td>
+                <td>${order.barang ?? "-"}</td>
+                <td>${order.jumlah ?? "-"}</td>
+                <td>${order.status ?? "-"}</td>
             </tr>
         `;
     });
