@@ -1,74 +1,111 @@
 /* =========================
-   TRACKING.CSS
+   TRACKING.CSS - DARK THEME
+   Seragam dengan Admin Panel
 ========================= */
 
-/* Gaya untuk kotak hasil tracking */
+/* Container hasil tracking */
 #resultContainer {
-    background: var(--card-bg);
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px var(--shadow);
+    background: linear-gradient(145deg, #1e2128, #17191f);
+    padding: 25px 20px;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+    margin: 20px auto;
+    max-width: 500px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#resultContainer:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.45);
 }
 
 #resultContainer h3 {
-    border-bottom: 2px solid var(--accent);
-    padding-bottom: 10px;
+    text-align: center;
     margin-bottom: 20px;
     color: var(--accent);
+    text-shadow: 0 0 12px rgba(0,195,255,0.3);
+    font-size: 1.6rem;
 }
 
 #resultContainer p {
     font-size: 1.1rem;
-    margin-bottom: 10px;
-    color: var(--text-muted);
+    margin-bottom: 12px;
+    color: var(--text-light);
+    line-height: 1.5;
 }
 
 #resultContainer span {
-    color: var(--text-light);
+    color: var(--accent);
     font-weight: 500;
+    display: inline-block;
 }
 
-/* Gaya untuk status pesanan */
+/* Status pesanan */
 #trackStatus {
-    font-size: 2rem !important; 
+    font-size: 2rem !important;
     font-weight: 700 !important;
-    display: inline-block;
-    padding: 5px 0;
+    display: block;
+    text-align: center;
+    padding: 10px 0;
+    margin-bottom: 15px;
+    color: var(--accent);
+    letter-spacing: 1px;
 }
 
 /* Input ID Pesanan */
 #orderIdInput {
     width: 100%;
-    max-width: 300px;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: #2a2e37; 
+    max-width: 350px;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: #22252d;
     color: var(--text-light);
-    font-size: 1.1rem;
+    font-size: 1rem;
     text-align: center;
-    margin: 15px 0;
+    margin: 15px auto;
+    display: block;
+    transition: 0.25s ease;
+}
+
+#orderIdInput:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #262a33;
+    box-shadow: 0 0 10px rgba(0,195,255,0.25);
 }
 
 /* Pesan error */
 #errorMessage {
-    padding: 10px;
-    background: rgba(239, 68, 68, 0.1); 
-    border-radius: 8px;
+    padding: 12px 15px;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 12px;
     text-align: center;
     border: 1px solid #ef4444;
     color: #ef4444;
+    font-weight: 500;
+    margin-top: 10px;
 }
 
-/* Responsif untuk Tracking */
-@media (max-width: 600px) {
+/* Responsif */
+@media (max-width: 768px) {
+    #resultContainer {
+        padding: 20px 15px;
+    }
+
     #resultContainer h3 {
         font-size: 1.4rem;
     }
+
     #resultContainer p {
         font-size: 1rem;
     }
+
     #trackStatus {
         font-size: 1.5rem !important;
+    }
+
+    #orderIdInput {
+        max-width: 90%;
     }
 }

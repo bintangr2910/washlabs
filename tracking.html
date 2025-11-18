@@ -18,36 +18,40 @@
     </header>
 
     <section class="section calculator" style="min-height: 80vh;">
-        <div class="container" style="max-width: 600px;">
-            <h2 class="section-title">🔎 Cek Status Pesanan</h2>
-            <p class="section-subtitle">Masukkan ID Pesanan (6 digit) Anda untuk melihat status terbaru.</p>
+        <div class="container">
+            <h2 class="section-title" style="text-align:center;">🔎 Cek Status Pesanan</h2>
+            <p class="section-subtitle" style="text-align:center;">Masukkan ID Pesanan (6 digit) Anda untuk melihat status terbaru.</p>
 
-            <div class="calc-box" style="text-align: center;">
+            <!-- FORM TRACKING -->
+            <div class="input-box">
                 <label for="orderIdInput">ID Pesanan:</label>
                 <input type="text" id="orderIdInput" placeholder="Contoh: 123456" maxlength="6" />
-                <button id="trackButton" class="spin-btn" style="margin-top: 20px;">Cek Status</button>
+                <button id="trackButton">Cek Status</button>
             </div>
 
-            <div id="resultContainer" class="total-box" style="margin-top: 40px; display: none; text-align: left; padding: 25px;">
-                <h3 style="font-size: 1.5rem; margin-bottom: 15px;">Detail Pesanan:</h3>
+            <!-- HASIL TRACKING -->
+            <div id="resultContainer" style="display: none;">
+                <h3>Detail Pesanan</h3>
                 <p>Nama: <span id="trackNama"></span></p>
                 <p>Barang: <span id="trackBarang"></span></p>
                 <p>Jumlah: <span id="trackJumlah"></span></p>
                 <p>Tanggal Masuk: <span id="trackDate"></span></p>
-                <p style="margin-top: 15px; font-size: 1.8rem; font-weight: 700;">
-                    Status: <span id="trackStatus" style="color: #facc15;"></span>
+                <p>
+                    Status: <span id="trackStatus"></span>
                 </p>
             </div>
 
-            <p id="errorMessage" class="note" style="margin-top: 20px; color: #ef4444; display: none;">ID Pesanan tidak ditemukan atau format salah.</p>
+            <!-- ERROR MESSAGE -->
+            <p id="errorMessage" style="display: none;"></p>
         </div>
     </section>
 
-    <footer class="footer">
+    <footer class="footer" style="text-align:center; padding:20px;">
         <p>© 2025 WashLabs.indonesia</p>
     </footer>
 
-    <script src="script.js"></script> <script>
+    <script src="script.js"></script>
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
             const _supabase = window.supabaseClient; // Ambil client dari script.js
             const trackButton = document.getElementById('trackButton');
@@ -55,60 +59,55 @@
             const resultContainer = document.getElementById('resultContainer');
             const errorMessage = document.getElementById('errorMessage');
 
-            if (trackButton) {
-                trackButton.addEventListener('click', async () => {
-                    const id = orderIdInput.value.trim();
-                    resultContainer.style.display = 'none';
-                    errorMessage.style.display = 'none';
-                    
-                    if (!id || id.length !== 6 || isNaN(id)) {
-                        errorMessage.textContent = 'Format ID Pesanan salah. Harus 6 digit angka.';
+            trackButton.addEventListener('click', async () => {
+                const id = orderIdInput.value.trim();
+                resultContainer.style.display = 'none';
+                errorMessage.style.display = 'none';
+
+                if (!id || id.length !== 6 || isNaN(id)) {
+                    errorMessage.textContent = 'Format ID Pesanan salah. Harus 6 digit angka.';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+
+                try {
+                    const { data, error } = await _supabase
+                        .from('orders')
+                        .select('nama, barang, jumlah, status, create_at')
+                        .eq('id', id)
+                        .single();
+
+                    if (error || !data) {
+                        errorMessage.textContent = 'ID Pesanan tidak ditemukan.';
                         errorMessage.style.display = 'block';
                         return;
                     }
 
-                    try {
-                        // Query ke tabel 'orders'
-                        const { data, error } = await _supabase
-                            .from('orders')
-                            .select('nama, barang, jumlah, status, create_at')
-                            .eq('id', id)
-                            .single();
+                    document.getElementById('trackNama').textContent = data.nama;
+                    document.getElementById('trackBarang').textContent = data.barang;
+                    document.getElementById('trackJumlah').textContent = data.jumlah;
+                    document.getElementById('trackDate').textContent = new Date(data.create_at).toLocaleDateString('id-ID');
 
-                        if (error || !data) {
-                            errorMessage.textContent = 'ID Pesanan tidak ditemukan.';
-                            errorMessage.style.display = 'block';
-                            return;
-                        }
+                    const statusElement = document.getElementById('trackStatus');
+                    statusElement.textContent = data.status;
 
-                        // Tampilkan data
-                        document.getElementById('trackNama').textContent = data.nama;
-                        document.getElementById('trackBarang').textContent = data.barang;
-                        document.getElementById('trackJumlah').textContent = data.jumlah;
-                        document.getElementById('trackDate').textContent = new Date(data.create_at).toLocaleDateString('id-ID');
-                        
-                        const statusElement = document.getElementById('trackStatus');
-                        statusElement.textContent = data.status;
-                        
-                        // Beri warna status
-                        if (data.status === 'Selesai') {
-                            statusElement.style.color = '#10b981'; // Hijau
-                        } else if (data.status === 'Sedang Dicuci') {
-                            statusElement.style.color = '#facc15'; // Kuning
-                        } else {
-                            statusElement.style.color = '#3b82f6'; // Biru (Antrian)
-                        }
-
-
-                        resultContainer.style.display = 'block';
-
-                    } catch (err) {
-                        console.error('Error tracking order:', err);
-                        errorMessage.textContent = 'Terjadi kesalahan saat mencari data.';
-                        errorMessage.style.display = 'block';
+                    // Warna status sesuai
+                    if (data.status === 'Selesai') {
+                        statusElement.style.color = '#10b981'; // Hijau
+                    } else if (data.status === 'Sedang Dicuci') {
+                        statusElement.style.color = '#facc15'; // Kuning
+                    } else {
+                        statusElement.style.color = '#3b82f6'; // Biru
                     }
-                });
-            }
+
+                    resultContainer.style.display = 'block';
+
+                } catch (err) {
+                    console.error('Error tracking order:', err);
+                    errorMessage.textContent = 'Terjadi kesalahan saat mencari data.';
+                    errorMessage.style.display = 'block';
+                }
+            });
         });
     </script>
 </body>
