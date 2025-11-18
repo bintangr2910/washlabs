@@ -1,6 +1,6 @@
 /* =======================================
-   1. SUPABASE CONFIG & CLIENT
-   (Koneksi Database)
+    1. SUPABASE CONFIG & CLIENT
+    (Koneksi Database)
 ======================================= */
 const SUPABASE_URL = 'https://zfevxdhonsbxyybogjjd.supabase.co'; 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmZXZ4ZGhvbnNieHl5Ym9nampkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0MTU0OTEsImV4cCI6MjA3ODk5MTQ5MX0.p95pmHVjYWL7L-0tx59Wyll6OP9mIsKdbUz1WRJ5P1k'; 
@@ -11,9 +11,9 @@ const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 window.supabaseClient = _supabase; 
 
 /* =======================================
-   FUNGSI GLOBAL (ADMIN) - DIPINDAHKAN KE GLOBAL SCOPE
-   Memastikan fungsi loadOrders dan updateStatus dapat diakses 
-   oleh onchange di HTML dan logika login/tambah pesanan admin.
+    FUNGSI GLOBAL (ADMIN)
+    Memastikan fungsi loadOrders dan updateStatus dapat diakses 
+    oleh onchange di HTML dan logika login/tambah pesanan admin.
 ======================================= */
 
 // --- FUNGSI MUAT DATA PESANAN (ADMIN) ---
@@ -23,10 +23,17 @@ async function loadOrders() {
 
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Memuat Data...</td></tr>';
     
-    const { data } = await _supabase
+    // Penanganan error untuk Supabase fetch
+    const { data, error } = await _supabase
         .from('orders')
         .select('*')
         .order('create_at', { ascending: false });
+
+    if (error) {
+        console.error("Error loading orders:", error.message);
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color: #ef4444;">Gagal memuat data. Cek koneksi Supabase Anda.</td></tr>';
+        return;
+    }
 
     if (data && data.length > 0) {
         tbody.innerHTML = data.map(o => `
@@ -53,38 +60,40 @@ async function loadOrders() {
 }
 window.loadOrders = loadOrders;
 
-// Ekspos fungsi updateStatus ke window agar bisa dipanggil oleh onchange di HTML
+// --- FUNGSI UPDATE STATUS PESANAN (ADMIN) ---
 window.updateStatus = async (id, val) => {
     const { error } = await _supabase.from('orders').update({ status: val }).eq('id', id);
     if(!error) {
         console.log(`Order ${id} updated to ${val}`);
         loadOrders(); // Refresh tabel setelah update
     } else {
-        alert("Gagal update status");
+        // Ganti alert() dengan console.error karena alert tidak ramah di iFrame
+        console.error("Gagal update status:", error.message);
     }
 };
 
 /* =======================================
-   2. LOGIKA UTAMA (Jalan saat web dimuat)
+    2. LOGIKA UTAMA (Jalan saat web dimuat)
 ======================================= */
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- A. NAVIGASI, MENU MOBILE & RESET ADMIN ---
     const menuBtn = document.getElementById("menu-toggle");
     const navLinks = document.getElementById("nav-links");
+    // ⚠️ PERINGATAN: Password admin ini disimpan di client-side dan mudah diakses.
+    // Fitur ini hanya untuk keperluan testing Spin.
     const adminPassword = "washlabsadmin"; 
     let adminMenuShown = localStorage.getItem("washlabs_admin_logged") === "true";
 
-    // ✅ PERBAIKAN: Toggle Menu Mobile (GARIS TIGA) - Tambah close on link click
+    // Toggle Menu Mobile
     if (menuBtn && navLinks) {
         menuBtn.addEventListener("click", () => {
             navLinks.classList.toggle("active");
         });
-        // Tambahkan event listener agar menu tertutup saat link diklik
+        // Event listener agar menu tertutup saat link diklik
         const links = navLinks.querySelectorAll('a');
         links.forEach(link => {
             link.addEventListener('click', function() {
-                // Memberikan sedikit jeda visual sebelum menu hilang
                 setTimeout(() => navLinks.classList.remove('active'), 300); 
             });
         });
@@ -93,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Tombol Reset Spin (Fitur Tersembunyi Admin)
     const navItems = Array.from(document.querySelectorAll(".nav-links li"));
     const kontakLi = navItems.find(li => li.textContent.includes("Kontak") || li.querySelector('a')?.getAttribute('href') === "#contact");
+    const SPIN_KEY = "spin_done_hash"; // Kunci LocalStorage untuk Spin Wheel
 
     if (kontakLi) {
         const resetLi = document.createElement("li");
@@ -101,13 +111,14 @@ document.addEventListener('DOMContentLoaded', () => {
         resetLi.style.display = adminMenuShown ? "block" : "none";
         
         resetLi.addEventListener("click", () => {
+            // NOTE: Penggunaan prompt() tidak disarankan di lingkungan iframe.
             const input = prompt("Masukkan password admin untuk Reset Spin:");
             if (input === adminPassword) {
                 localStorage.setItem("washlabs_admin_logged", "true");
                 resetLi.style.display = "block";
-                localStorage.removeItem("spin_done_hash"); 
+                localStorage.removeItem(SPIN_KEY); // Hapus status spin
                 alert("✅ Sukses! User sekarang bisa melakukan Spin lagi.");
-                // Aktifkan kembali tombol spin di modal jika ada
+                
                 const spinButton = document.getElementById("spinButton");
                 if (spinButton) {
                     spinButton.disabled = false;
@@ -144,19 +155,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- C. SPIN WHEEL ---
-    // ✅ PERBAIKAN: Deklarasi variabel dipindahkan keluar dari blok if(spinButton) 
-    // agar tombol floating spinOpen bisa mengakses spinModal.
     const spinButton = document.getElementById("spinButton");
     const wheel = document.getElementById("wheel");
     const resultText = document.getElementById("resultText");
-    const spinModal = document.getElementById("spinModal"); // <-- DIPERBAIKI: Variabel sekarang ada di luar blok
-    const SPIN_KEY = "spin_done_hash";
+    const spinModal = document.getElementById("spinModal"); 
+    const SPIN_KEY_SPIN = "spin_done_hash"; // Kunci LocalStorage
 
-    const spinOpenBtn = document.getElementById("spinOpen"); // Tombol floating
+    const spinOpenBtn = document.getElementById("spinOpen"); 
     const closeSpinBtn = document.getElementById("closeSpin");
     const spinBackdrop = document.getElementById("spinBackdrop");
 
-    // ✅ PERBAIKAN: Event Buka/Tutup Modal (Sekarang spinModal terdefinisi)
+    // Event Buka/Tutup Modal
     if (spinOpenBtn && spinModal) {
         spinOpenBtn.addEventListener("click", () => spinModal.classList.add("active"));
     }
@@ -164,34 +173,35 @@ document.addEventListener('DOMContentLoaded', () => {
     spinBackdrop?.addEventListener("click", () => spinModal.classList.remove("active"));
     
     
-    // Logika Spin Putaran (Hanya dijalankan jika tombol spin di dalam modal ada)
+    // Logika Spin Putaran 
     if (spinButton && wheel && resultText) {
         
         // Cek apakah user sudah pernah spin
-        if (localStorage.getItem(SPIN_KEY)) {
+        if (localStorage.getItem(SPIN_KEY_SPIN)) {
             spinButton.disabled = true;
             spinButton.textContent = "Sudah Spin";
         }
 
         // Logika Putaran
         spinButton.addEventListener("click", () => {
-            if (localStorage.getItem(SPIN_KEY)) return;
+            if (localStorage.getItem(SPIN_KEY_SPIN)) return;
             
             const sectors = ["15%", "5%", "25%", "5%", "10%", "ZONK"];
             
-            // Mengubah logika peluang agar lebih baik dan menghindari ZONK/diskon kecil 70% dari semua opsi
+            // Logika peluang untuk hasil Spin
             let randomIdx;
             if (Math.random() < 0.7) { // 70% chance to land on ZONK (index 5) or small discount (index 1, 3)
-                const smallResults = [1, 3, 5]; // 5%, 5%, ZONK
+                const smallResults = [1, 3, 5]; 
                 randomIdx = smallResults[Math.floor(Math.random() * smallResults.length)];
             } else { // 30% chance to land on medium/big discount (index 0, 2, 4)
-                const bigResults = [0, 2, 4]; // 15%, 25%, 10%
+                const bigResults = [0, 2, 4]; 
                 randomIdx = bigResults[Math.floor(Math.random() * bigResults.length)];
             }
             
             const degPerSegment = 360 / 6;
-            // Hitung sudut: 5 putaran penuh + sudut segmen target
-            const targetDeg = (360 * 5) + (randomIdx * degPerSegment); 
+            // Tambahkan sedikit offset acak untuk visual yang lebih baik
+            const randomOffset = Math.random() * (degPerSegment - 10); 
+            const targetDeg = (360 * 5) + (randomIdx * degPerSegment) + randomOffset; 
 
             wheel.style.transition = "transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67)";
             wheel.style.transform = `rotate(-${targetDeg}deg)`;
@@ -199,15 +209,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             setTimeout(() => {
                 const hasil = sectors[randomIdx];
-                resultText.innerHTML = hasil === "ZONK" ? "Yah.. ZONK 😅 Coba lagi besok!" : `Selamat! Diskon ${hasil} 🎉`;
-                localStorage.setItem(SPIN_KEY, "done"); // Simpan status sudah spin
+                resultText.innerHTML = hasil === "ZONK" ? "Yah.. ZONK 😅 Coba lagi besok!" : `Selamat! Diskon <b>${hasil}</b> 🎉`;
+                localStorage.setItem(SPIN_KEY_SPIN, "done"); // Simpan status sudah spin
                 spinButton.textContent = "Selesai";
+                
+                // Atur ulang rotasi transform agar putaran berikutnya dimulai dari posisi akhir yang bersih
+                wheel.style.transition = "none";
+                const finalRotation = targetDeg % 360; 
+                wheel.style.transform = `rotate(-${finalRotation}deg)`; 
             }, 4000); // Tunggu animasi selesai (4 detik)
         });
     }
 
     /* =======================================
-       3. LOGIKA TRACKING (Khusus Halaman Tracking)
+        3. LOGIKA TRACKING (Khusus Halaman Tracking)
     ======================================= */
     const trackBtn = document.getElementById('trackButton');
     if (trackBtn) {
@@ -219,6 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Reset tampilan
             resultBox.style.display = 'none';
             errorMsg.style.display = 'none';
+            errorMsg.style.color = 'red'; 
 
             // Validasi input
             if (id.length !== 6 || isNaN(id)) {
@@ -226,6 +242,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorMsg.style.display = 'block';
                 return;
             }
+
+            // Tambahkan loading state
+            trackBtn.disabled = true;
+            trackBtn.textContent = 'Mencari...';
 
             try {
                 // Ambil data dari Supabase
@@ -256,14 +276,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     resultBox.style.display = 'block';
                 }
             } catch (err) {
-                errorMsg.textContent = "Terjadi kesalahan koneksi.";
+                console.error("Tracking Error:", err);
+                errorMsg.textContent = "Terjadi kesalahan koneksi atau server.";
                 errorMsg.style.display = 'block';
+            } finally {
+                // Hapus loading state
+                trackBtn.disabled = false;
+                trackBtn.textContent = 'Lacak Pesanan';
             }
         });
     }
 
     /* =======================================
-       4. LOGIKA ADMIN (Khusus Halaman Admin)
+        4. LOGIKA ADMIN (Khusus Halaman Admin)
     ======================================= */
     const loginForm = document.getElementById('login-form');
     
@@ -287,14 +312,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const u = document.getElementById('username').value;
             const p = document.getElementById('password').value;
             
-            // Ambil user dari tabel 'admin'
-            const { data } = await _supabase
+            const { data, error } = await _supabase
                 .from('admin')
                 .select('*')
                 .eq('username', u)
                 .single();
+            
+            // ⚠️ PENTING: Untuk lingkungan produksi, pastikan password di tabel 'admin' 
+            // di-hash (misalnya menggunakan fungsi Supabase/Auth), jangan disimpan
+            // dalam bentuk plain text seperti yang diimplikasikan oleh validasi ini.
+            
+            if (error && error.code !== 'PGRST116') { // PGRST116 = tidak ada baris ditemukan
+                 msg.textContent = "Terjadi kesalahan server saat login.";
+                 msg.style.display = 'block';
+                 console.error("Login Supabase Error:", error);
+                 return;
+            }
 
-            // Validasi Password Sederhana
+            // Validasi Password Sederhana (sesuai kode asli)
             if (data && data.password === p) {
                 localStorage.setItem('isAdminLoggedIn', 'true');
                 location.reload(); // Refresh halaman
@@ -316,7 +351,19 @@ document.addEventListener('DOMContentLoaded', () => {
             addForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const f = new FormData(e.target);
-                const newId = Math.floor(100000 + Math.random() * 900000); // Generate ID 6 Digit
+                
+                // Logic untuk memastikan ID unik 6 digit
+                let newId;
+                let isUnique = false;
+                
+                // Cek unik ID di database (pencegahan tabrakan ID)
+                while (!isUnique) {
+                    newId = Math.floor(100000 + Math.random() * 900000); 
+                    const { count } = await _supabase.from('orders').select('id', { count: 'exact', head: true }).eq('id', newId);
+                    if (count === 0) {
+                        isUnique = true;
+                    }
+                }
 
                 const { error } = await _supabase.from('orders').insert([{
                     id: newId,
@@ -324,20 +371,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     telepon: f.get('telepon'),
                     barang: f.get('barang'),
                     jumlah: f.get('jumlah'),
-                    status: 'Antrian'
+                    status: 'Antrian',
+                    create_at: new Date().toISOString() // Tambahkan timestamp
                 }]);
 
                 const notif = document.getElementById('addMessage');
                 if (!error) {
                     notif.textContent = `✅ Sukses! ID Pesanan: ${newId}`;
                     notif.style.display = 'block';
-                    notif.style.color = '#10b981';
+                    notif.style.color = '#10b981'; // Hijau
                     e.target.reset();
                     window.loadOrders(); // Refresh tabel
                 } else {
-                    notif.textContent = "Gagal: " + error.message;
+                    notif.textContent = "❌ Gagal: " + error.message;
                     notif.style.display = 'block';
                     notif.style.color = 'red';
+                    console.error("Tambah Pesanan Error:", error);
                 }
             });
         }
