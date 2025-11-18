@@ -1,81 +1,131 @@
 /* =========================
    TRACKING.CSS - DARK THEME
-   Seragam dengan Admin Panel
+   Terstruktur & Rapi
 ========================= */
 
-/* Container hasil tracking */
+/* ====== BODY CONTAINER ====== */
+body {
+    font-family: "Poppins", sans-serif;
+    background: var(--bg, #1b1d23);
+    color: var(--text, #fff);
+    margin: 0;
+    padding: 0;
+}
+
+.section {
+    padding: 50px 15px;
+}
+
+/* ====== FORM INPUT BOX ====== */
+.calc-box {
+    background: linear-gradient(145deg, #1e2128, #17191f);
+    padding: 30px 25px;
+    border-radius: 18px;
+    max-width: 400px;
+    margin: 20px auto;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+    text-align: center;
+}
+
+.calc-box h3 {
+    color: var(--accent, #00c3ff);
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-shadow: 0 0 12px rgba(0,195,255,0.3);
+}
+
+.calc-box label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    text-align: left;
+    color: var(--text-light, #f5f5f5);
+}
+
+.calc-box input {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: #22252d;
+    color: var(--text-light, #f5f5f5);
+    font-size: 1rem;
+    margin-bottom: 15px;
+    transition: 0.25s ease;
+}
+
+.calc-box input:focus {
+    outline: none;
+    border-color: var(--accent, #00c3ff);
+    background: #262a33;
+    box-shadow: 0 0 10px rgba(0,195,255,0.25);
+}
+
+/* Tombol */
+.calc-box button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: var(--accent, #00c3ff);
+    color: #000;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.calc-box button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 20px rgba(0,195,255,0.4);
+}
+
+/* ====== HASIL TRACKING ====== */
 #resultContainer {
     background: linear-gradient(145deg, #1e2128, #17191f);
     padding: 25px 20px;
     border-radius: 18px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.35);
-    margin: 20px auto;
+    margin: 30px auto 0 auto;
     max-width: 500px;
+    display: none;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-#resultContainer:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.45);
 }
 
 #resultContainer h3 {
     text-align: center;
     margin-bottom: 20px;
-    color: var(--accent);
+    color: var(--accent, #00c3ff);
     text-shadow: 0 0 12px rgba(0,195,255,0.3);
-    font-size: 1.6rem;
+    font-size: 1.5rem;
 }
 
 #resultContainer p {
-    font-size: 1.1rem;
+    font-size: 1rem;
     margin-bottom: 12px;
-    color: var(--text-light);
+    color: var(--text-light, #f5f5f5);
     line-height: 1.5;
 }
 
 #resultContainer span {
-    color: var(--accent);
-    font-weight: 500;
+    font-weight: 600;
     display: inline-block;
 }
 
-/* Status pesanan */
+/* Status Pesanan */
 #trackStatus {
-    font-size: 2rem !important;
-    font-weight: 700 !important;
+    font-size: 1.8rem;
+    font-weight: 700;
     display: block;
     text-align: center;
     padding: 10px 0;
-    margin-bottom: 15px;
-    color: var(--accent);
+    margin-top: 15px;
+    color: var(--accent, #00c3ff);
     letter-spacing: 1px;
+    transition: color 0.3s ease;
 }
 
-/* Input ID Pesanan */
-#orderIdInput {
-    width: 100%;
-    max-width: 350px;
-    padding: 12px 15px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.12);
-    background: #22252d;
-    color: var(--text-light);
-    font-size: 1rem;
-    text-align: center;
-    margin: 15px auto;
-    display: block;
-    transition: 0.25s ease;
-}
-
-#orderIdInput:focus {
-    outline: none;
-    border-color: var(--accent);
-    background: #262a33;
-    box-shadow: 0 0 10px rgba(0,195,255,0.25);
-}
-
-/* Pesan error */
+/* ====== PESAN ERROR ====== */
 #errorMessage {
     padding: 12px 15px;
     background: rgba(239, 68, 68, 0.1);
@@ -84,28 +134,31 @@
     border: 1px solid #ef4444;
     color: #ef4444;
     font-weight: 500;
-    margin-top: 10px;
+    margin: 15px auto;
+    max-width: 400px;
+    display: none;
 }
 
-/* Responsif */
+/* ====== RESPONSIF ====== */
 @media (max-width: 768px) {
+    .calc-box {
+        width: 90%;
+        padding: 20px 15px;
+    }
+
     #resultContainer {
         padding: 20px 15px;
     }
 
     #resultContainer h3 {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
     }
 
     #resultContainer p {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
 
     #trackStatus {
-        font-size: 1.5rem !important;
-    }
-
-    #orderIdInput {
-        max-width: 90%;
+        font-size: 1.5rem;
     }
 }
