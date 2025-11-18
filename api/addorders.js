@@ -4,6 +4,8 @@ const supabase = createClient(process.env.DB_URL, process.env.DB_KEY);
 export default async function handler(req, res) {
   const { nama, telepon, barang, jumlah, status } = req.body;
 
+  
+
   const { error } = await supabase
     .from("orders")
     .insert([{ nama, telepon, barang, jumlah, status }]);
