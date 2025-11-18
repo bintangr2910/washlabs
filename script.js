@@ -6,14 +6,13 @@ const SUPABASE_URL = 'https://zfevxdhonsbxyybogjjd.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmZXZ4ZGhvbnNieHl5Ym9nampkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0MTU0OTEsImV4cCI6MjA3ODk5MTQ5MX0.p95pmHVjYWL7L-0tx59Wyll6OP9mIsKdbUz1WRJ5P1k'; 
 
 // Inisialisasi Supabase
-// Pastikan <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> ada di HTML
 const { createClient } = supabase;
 const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 window.supabaseClient = _supabase; 
 
 /* =======================================
-   FUNGSI GLOBAL (ADMIN) - DIPERBAIKI: DIPINDAHKAN KE SCOPE GLOBAL
-   Ini memastikan fungsi loadOrders dan updateStatus dapat diakses 
+   FUNGSI GLOBAL (ADMIN) - DIPINDAHKAN KE GLOBAL SCOPE
+   Memastikan fungsi loadOrders dan updateStatus dapat diakses 
    oleh onchange di HTML dan logika login/tambah pesanan admin.
 ======================================= */
 
@@ -59,7 +58,7 @@ window.updateStatus = async (id, val) => {
     const { error } = await _supabase.from('orders').update({ status: val }).eq('id', id);
     if(!error) {
         console.log(`Order ${id} updated to ${val}`);
-        loadOrders(); // Refresh tabel
+        loadOrders(); // Refresh tabel setelah update
     } else {
         alert("Gagal update status");
     }
@@ -70,13 +69,13 @@ window.updateStatus = async (id, val) => {
 ======================================= */
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- A. NAVIGASI, MENU MOBILE & RESET ADMIN (GARIS TIGA) ---
+    // --- A. NAVIGASI, MENU MOBILE & RESET ADMIN ---
     const menuBtn = document.getElementById("menu-toggle");
     const navLinks = document.getElementById("nav-links");
-    const adminPassword = "washlabsadmin"; // Password Reset Spin
+    const adminPassword = "washlabsadmin"; 
     let adminMenuShown = localStorage.getItem("washlabs_admin_logged") === "true";
 
-    // ✅ PERBAIKAN: Toggle Menu Mobile (GARIS TIGA)
+    // ✅ PERBAIKAN: Toggle Menu Mobile (GARIS TIGA) - Tambah close on link click
     if (menuBtn && navLinks) {
         menuBtn.addEventListener("click", () => {
             navLinks.classList.toggle("active");
@@ -108,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 resetLi.style.display = "block";
                 localStorage.removeItem("spin_done_hash"); 
                 alert("✅ Sukses! User sekarang bisa melakukan Spin lagi.");
-                // Jika tombol spin sudah di-disable, aktifkan kembali
+                // Aktifkan kembali tombol spin di modal jika ada
                 const spinButton = document.getElementById("spinButton");
                 if (spinButton) {
                     spinButton.disabled = false;
@@ -144,12 +143,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- C. SPIN WHEEL (TOMBOL SPIN DISKON DI BAWAH) ---
-    // ✅ PERBAIKAN: Deklarasi variabel spin modal dipindahkan ke sini
+    // --- C. SPIN WHEEL ---
+    // ✅ PERBAIKAN: Deklarasi variabel dipindahkan keluar dari blok if(spinButton) 
+    // agar tombol floating spinOpen bisa mengakses spinModal.
     const spinButton = document.getElementById("spinButton");
     const wheel = document.getElementById("wheel");
     const resultText = document.getElementById("resultText");
-    const spinModal = document.getElementById("spinModal"); 
+    const spinModal = document.getElementById("spinModal"); // <-- DIPERBAIKI: Variabel sekarang ada di luar blok
     const SPIN_KEY = "spin_done_hash";
 
     const spinOpenBtn = document.getElementById("spinOpen"); // Tombol floating
@@ -179,12 +179,12 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const sectors = ["15%", "5%", "25%", "5%", "10%", "ZONK"];
             
-            // Logika peluang yang lebih baik (70% kecil/ZONK, 30% besar)
+            // Mengubah logika peluang agar lebih baik dan menghindari ZONK/diskon kecil 70% dari semua opsi
             let randomIdx;
-            if (Math.random() < 0.7) { 
+            if (Math.random() < 0.7) { // 70% chance to land on ZONK (index 5) or small discount (index 1, 3)
                 const smallResults = [1, 3, 5]; // 5%, 5%, ZONK
                 randomIdx = smallResults[Math.floor(Math.random() * smallResults.length)];
-            } else { 
+            } else { // 30% chance to land on medium/big discount (index 0, 2, 4)
                 const bigResults = [0, 2, 4]; // 15%, 25%, 10%
                 randomIdx = bigResults[Math.floor(Math.random() * bigResults.length)];
             }
