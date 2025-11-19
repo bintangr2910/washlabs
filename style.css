@@ -436,20 +436,6 @@ body {
 }
 
 
-.admin-reset-btn {
-  background: #ef4444;
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
-  margin-top: 5px;
-  display: none; /* default sembunyi sampai admin login */
-}
-
 /* =========================
    SPIN
 ========================= */
@@ -486,13 +472,6 @@ body {
 }
 .spin-modal.active { display: flex; }
 
-.spin-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(5px);
-}
-
 .spin-content {
   position: relative;
   background: #1e293b;
@@ -503,7 +482,12 @@ body {
   box-shadow: 0 0 25px rgba(0,0,0,0.5);
   z-index: 2100;
 }
-
+.spin-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(5px);
+}
 .close-btn {
   position: absolute;
   top: 10px;

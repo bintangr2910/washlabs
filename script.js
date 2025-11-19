@@ -99,38 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Tombol Reset Spin (Fitur Tersembunyi Admin)
-    const navItems = Array.from(document.querySelectorAll(".nav-links li"));
-    const kontakLi = navItems.find(li => li.textContent.includes("Kontak") || li.querySelector('a')?.getAttribute('href') === "#contact");
-    const SPIN_KEY = "spin_done_hash"; // Kunci LocalStorage untuk Spin Wheel
-
-    if (kontakLi) {
-        const resetLi = document.createElement("li");
-        resetLi.innerHTML = `<a href="javascript:void(0)" class="admin-reset-btn" style="color:#ef4444; font-weight:bold;">Reset Spin 🔄</a>`;
-        
-        resetLi.style.display = adminMenuShown ? "block" : "none";
-        
-        resetLi.addEventListener("click", () => {
-            // NOTE: Penggunaan prompt() tidak disarankan di lingkungan iframe.
-            const input = prompt("Masukkan password admin untuk Reset Spin:");
-            if (input === adminPassword) {
-                localStorage.setItem("washlabs_admin_logged", "true");
-                resetLi.style.display = "block";
-                localStorage.removeItem(SPIN_KEY); // Hapus status spin
-                alert("✅ Sukses! User sekarang bisa melakukan Spin lagi.");
-                
-                const spinButton = document.getElementById("spinButton");
-                if (spinButton) {
-                    spinButton.disabled = false;
-                    spinButton.textContent = "PUTAR";
-                    document.getElementById("resultText").innerHTML = "";
-                }
-            } else if (input) {
-                alert("❌ Password salah!");
-            }
-        });
-        kontakLi.insertAdjacentElement('afterend', resetLi);
-    }
 
     // --- B. KALKULATOR HARGA (Halaman Utama) ---
     const priceForm = document.getElementById("priceForm");
@@ -189,14 +157,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const sectors = ["15%", "5%", "25%", "5%", "10%", "ZONK"];
             
             // Logika peluang untuk hasil Spin
-            let randomIdx;
-            if (Math.random() < 0.7) { // 70% chance to land on ZONK (index 5) or small discount (index 1, 3)
-                const smallResults = [1, 3, 5]; 
-                randomIdx = smallResults[Math.floor(Math.random() * smallResults.length)];
-            } else { // 30% chance to land on medium/big discount (index 0, 2, 4)
-                const bigResults = [0, 2, 4]; 
-                randomIdx = bigResults[Math.floor(Math.random() * bigResults.length)];
-            }
+                let randomIdx;
+                // Pilih hanya dari 5%, 10%, dan ZONK
+                const allowedResults = [1, 3, 4, 5]; // 1=5%, 3=5%, 4=10%, 5=ZONK
+                randomIdx = allowedResults[Math.floor(Math.random() * allowedResults.length)];
             
             const degPerSegment = 360 / 6;
             // Tambahkan sedikit offset acak untuk visual yang lebih baik
@@ -221,71 +185,71 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* =======================================
-        3. LOGIKA TRACKING (Khusus Halaman Tracking)
-    ======================================= */
-    const trackBtn = document.getElementById('trackButton');
-    if (trackBtn) {
-        trackBtn.addEventListener('click', async () => {
-            const id = document.getElementById('orderIdInput').value.trim();
-            const resultBox = document.getElementById('resultContainer');
-            const errorMsg = document.getElementById('errorMessage');
+/* =======================================
+   3. LOGIKA TRACKING (BY ID)
+======================================= */
+const trackBtn = document.getElementById("trackButton");
 
-            // Reset tampilan
-            resultBox.style.display = 'none';
-            errorMsg.style.display = 'none';
-            errorMsg.style.color = 'red'; 
+if (trackBtn) {
+    trackBtn.addEventListener("click", async () => {
+        const id = document.getElementById("orderIdInput").value.trim();
+        const resultBox = document.getElementById("resultContainer");
+        const errorMsg = document.getElementById("errorMessage");
 
-            // Validasi input
-            if (id.length !== 6 || isNaN(id)) {
-                errorMsg.textContent = "ID harus berupa 6 digit angka.";
-                errorMsg.style.display = 'block';
-                return;
+        // Reset tampilan
+        resultBox.style.display = "none";
+        errorMsg.style.display = "none";
+
+        // Validasi ID
+        if (id.length !== 6 || isNaN(id)) {
+            errorMsg.textContent = "ID harus berupa 6 digit angka.";
+            errorMsg.style.display = "block";
+            return;
+        }
+
+        // Loading state
+        trackBtn.disabled = true;
+        trackBtn.textContent = "Mencari...";
+
+        try {
+            // Query Supabase (TANPA create_at!)
+            const { data, error } = await db
+                .from("orders")
+                .select("nama, barang, jumlah, status")
+                .eq("id", id)
+                .single();
+
+            if (!data || error) {
+                errorMsg.textContent = "Pesanan tidak ditemukan.";
+                errorMsg.style.display = "block";
+            } else {
+                // Masukkan data ke HTML
+                document.getElementById("trackNama").textContent = data.nama;
+                document.getElementById("trackBarang").textContent = data.barang;
+                document.getElementById("trackJumlah").textContent = data.jumlah;
+
+                const statEl = document.getElementById("trackStatus");
+                statEl.textContent = data.status;
+
+                // Warna status
+                if (data.status === "Selesai") statEl.style.color = "#10b981";
+                else if (data.status === "Sedang Dicuci") statEl.style.color = "#facc15";
+                else statEl.style.color = "#3b82f6";
+
+                resultBox.style.display = "block";
             }
+        } catch (err) {
+            console.error("Tracking Error:", err);
+            errorMsg.textContent = "Terjadi kesalahan koneksi.";
+            errorMsg.style.display = "block";
+        }
 
-            // Tambahkan loading state
-            trackBtn.disabled = true;
-            trackBtn.textContent = 'Mencari...';
+        // Kembalikan tombol
+        trackBtn.disabled = false;
+        trackBtn.textContent = "Lacak Pesanan";
+    });
+}
 
-            try {
-                // Ambil data dari Supabase
-                const { data, error } = await _supabase
-                    .from('orders')
-                    .select('nama, barang, jumlah, status, create_at')
-                    .eq('id', id)
-                    .single();
-
-                if (error || !data) {
-                    errorMsg.textContent = "Pesanan tidak ditemukan.";
-                    errorMsg.style.display = 'block';
-                } else {
-                    // Isi data ke HTML
-                    document.getElementById('trackNama').textContent = data.nama;
-                    document.getElementById('trackBarang').textContent = data.barang;
-                    document.getElementById('trackJumlah').textContent = data.jumlah;
-                    document.getElementById('trackDate').textContent = new Date(data.create_at).toLocaleDateString('id-ID');
-                    
-                    const statEl = document.getElementById('trackStatus');
-                    statEl.textContent = data.status;
-                    
-                    // Warna Status
-                    if(data.status === 'Selesai') statEl.style.color = '#10b981';
-                    else if(data.status === 'Sedang Dicuci') statEl.style.color = '#facc15';
-                    else statEl.style.color = '#3b82f6';
-
-                    resultBox.style.display = 'block';
-                }
-            } catch (err) {
-                console.error("Tracking Error:", err);
-                errorMsg.textContent = "Terjadi kesalahan koneksi atau server.";
-                errorMsg.style.display = 'block';
-            } finally {
-                // Hapus loading state
-                trackBtn.disabled = false;
-                trackBtn.textContent = 'Lacak Pesanan';
-            }
-        });
-    }
 
     /* =======================================
         4. LOGIKA ADMIN (Khusus Halaman Admin)

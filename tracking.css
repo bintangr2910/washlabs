@@ -1,43 +1,41 @@
-/* =========================
-   ADMIN.CSS (LENGKAP)
-   Style untuk Form Login & Tabel Dashboard
-========================= */
+/* ============================================================
+   ADMIN.CSS – FINAL VERSION (CLEAN, RAPIH, PREMIUM UI)
+============================================================ */
 
-/* Variabel Warna (diasumsikan dari style.css) */
+/* ===== Root Variables ===== */
 :root {
     --bg: #1b1d23;
-    --card-bg: linear-gradient(145deg, #1e2128, #17191f);
-    --text: #fff;
-    --text-light: #f5f5f5;
+    --card-bg: linear-gradient(145deg, #1f2229, #191b21);
+    --text: #ffffff;
+    --text-light: #e8e8e8;
     --accent: #00c3ff;
     --gray: #a9b3c1;
-    --shadow: rgba(0,0,0,0.35);
+    --shadow: rgba(0, 0, 0, 0.35);
 }
 
-/* ====== ADMIN LOGIN FORM (INI BAGIAN BARU) ====== */
+/* ============================================================
+   LOGIN FORM ADMIN
+============================================================ */
 
-/* Kontainer Form Login */
 #login-form {
-    /* Ini kuncinya: max-width dan margin auto untuk di tengah */
-    max-width: 450px; 
-    margin: 40px auto; /* 40px atas/bawah, auto kiri/kanan */
+    max-width: 450px;
+    margin: 50px auto;
 }
 
-/* Kotak Form Login (Style dari tracking.css lama) */
+/* Box login */
 .calc-box {
     background: var(--card-bg);
     padding: 30px 25px;
     border-radius: 18px;
-    box-shadow: 0 8px 25px var(--shadow);
     border: 1px solid rgba(255,255,255,0.12);
-    text-align: left;
+    box-shadow: 0 8px 25px var(--shadow);
 }
 
 .calc-box label {
-    display: block;
-    margin-bottom: 8px;
+    color: var(--text-light);
     font-weight: 500;
-    color: var(--text-light, #f5f5f5);
+    margin-bottom: 8px;
+    display: block;
 }
 
 .calc-box input[type="text"],
@@ -45,45 +43,44 @@
     width: 100%;
     padding: 12px 15px;
     border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.12);
     background: #22252d;
-    color: var(--text-light, #f5f5f5);
-    font-size: 1rem;
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-light);
     margin-bottom: 15px;
-    transition: 0.25s ease;
+    transition: 0.25s;
 }
 
-.calc-box input[type="text"]:focus,
-.calc-box input[type="password"]:focus {
+.calc-box input:focus {
     outline: none;
-    border-color: var(--accent, #00c3ff);
+    border-color: var(--accent);
     background: #262a33;
     box-shadow: 0 0 10px rgba(0,195,255,0.25);
 }
 
-/* Tombol Login (Spin-btn dari style.css) */
 .calc-box .spin-btn {
-     width: 100%;
+    width: 100%;
 }
 
-/* Pesan Error */
 #loginMessage {
     padding: 12px 15px;
-    background: rgba(239, 68, 68, 0.1);
-    border-radius: 12px;
-    text-align: center;
+    background: rgba(239, 68, 68, 0.12);
     border: 1px solid #ef4444;
+    border-radius: 12px;
     color: #ef4444;
     font-weight: 500;
     margin-top: 15px;
+    text-align: center;
 }
 
-/* ====== FORM TAMBAH PESANAN (INI JUGA BARU) ====== */
+/* ============================================================
+   FORM TAMBAH PESANAN
+============================================================ */
+
 #addOrderForm label {
-     display: block;
+    display: block;
     margin-bottom: 8px;
     font-weight: 500;
-    color: var(--text-light, #f5f5f5);
+    color: var(--text-light);
 }
 
 #addOrderForm input[type="text"],
@@ -91,93 +88,91 @@
     width: 100%;
     padding: 12px 15px;
     border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.12);
     background: #22252d;
-    color: var(--text-light, #f5f5f5);
-    font-size: 1rem;
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-light);
     margin-bottom: 15px;
-    transition: 0.25s ease;
+    transition: 0.25s;
 }
- #addOrderForm input[type="text"]:focus,
-#addOrderForm input[type="number"]:focus {
-     outline: none;
-    border-color: var(--accent, #00c3ff);
+
+#addOrderForm input:focus {
+    outline: none;
+    border-color: var(--accent);
     background: #262a33;
     box-shadow: 0 0 10px rgba(0,195,255,0.25);
 }
 
+/* ============================================================
+   TABLE CONTAINER (DASHBOARD)
+============================================================ */
 
-/* ====== CONTAINER TABEL (Style Lama Anda) ====== */
 .queue-container {
+    width: 100%;
     background: var(--card-bg);
-    padding: 0;
     border-radius: 18px;
-    margin: 20px auto;
+    margin: auto;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,0.12);
     box-shadow: 0 8px 25px var(--shadow);
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.12);
 }
 
-/* ====== TABEL ANTRIAN (Style Lama Anda) ====== */
+/* ============================================================
+   TABEL DASHBOARD ADMIN
+============================================================ */
+
 .queue-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-/* Header Tabel */
 .queue-table th {
-    background: var(--accent, #00c3ff);
+    background: var(--accent);
     color: #000;
     padding: 15px 18px;
-    text-align: left;
-    font-size: 1rem;
+    text-align: center;
     font-weight: 600;
-    white-space: nowrap; 
+    white-space: nowrap;
 }
 
-/* Baris/Sel Tabel */
 .queue-table td {
     padding: 15px 18px;
-    color: var(--text-light, #f5f5f5);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    white-space: nowrap; 
-    vertical-align: middle;
+    color: var(--text-light);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 .queue-table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255,255,255,0.05);
 }
 
 .queue-table tbody tr:last-child td {
     border-bottom: none;
 }
 
-/* ====== ELEMEN KHUSUS ADMIN (Dropdown & Tombol) ====== */
+/* Dropdown Status */
 .queue-table tbody select {
     padding: 6px 10px;
     border-radius: 8px;
     background: #22252d;
-    color: var(--text-light);
     border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-light);
     cursor: pointer;
-    transition: 0.25s ease;
 }
 
 .queue-table tbody select:focus {
     border-color: var(--accent);
     box-shadow: 0 0 10px rgba(0,195,255,0.25);
-    outline: none;
 }
 
+/* Tombol Hapus */
 .queue-table tbody button {
-    background: #ef4444;
-    color: #fff;
     padding: 6px 12px;
     border-radius: 8px;
+    background: #ef4444;
     border: none;
-    cursor: pointer;
+    color: #fff;
     font-weight: 600;
-    transition: 0.2s ease;
+    cursor: pointer;
 }
 
 .queue-table tbody button:hover {
@@ -185,30 +180,70 @@
     transform: scale(1.05);
 }
 
-
-/* ====== RESPONSIF (HP) ====== */
+/* ==========================================
+   MOBILE MODE — TABEL FULL LAYAR & RAPI
+========================================== */
 @media (max-width: 768px) {
-    .section {
-        padding: 30px 5px; 
-    }
 
-    /* Agar tabel bisa scroll ke samping */
+    /* Container tabel penuh layar */
     .queue-container {
-        overflow-x: auto; 
+        width: 100vw;              /* benar-benar penuh layar */
+        margin-left: 50%;
+        transform: translateX(-50%);
+
+        background: var(--card-bg);
+        padding: 0;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.15);
+        box-shadow: 0 5px 25px rgba(0,0,0,0.4);
+        overflow: hidden;
     }
 
+    /* Tabel besar full */
+    .queue-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        background: transparent;
+    }
+
+    /* Header tabel */
     .queue-table th {
-        padding: 12px 15px;
-        font-size: 0.9rem;
+        background: var(--accent);
+        color: #000;
+        padding: 14px 8px;
+        font-size: 1rem;
+        font-weight: 700;
+        text-align: center;
+        border: 1px solid rgba(0,0,0,0.2);
     }
 
+    /* Isi tabel */
     .queue-table td {
-        padding: 12px 15px;
+        padding: 14px 8px;
+        font-size: 1rem;           /* lebih besar, mudah dibaca */
+        color: var(--text-light);
+        text-align: center;
+        border: 1px solid rgba(255,255,255,0.15);  /* GARIS TEBEL */
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.4rem;
+    }
+
+    /* Badge status */
+    .badge {
+        padding: 7px 12px;
+        border-radius: 10px;
+        display: inline-block;
         font-size: 0.9rem;
     }
 
-    .queue-table tbody select {
-        padding: 5px 8px;
-        font-size: 0.85rem;
+    /* perbaiki teks catatan */
+    .queue-note {
+        margin-top: 12px;
+        font-size: 0.85rem !important;
+        text-align: center;
     }
 }
+
+

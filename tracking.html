@@ -10,17 +10,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Panggil CSS Global (jika ada, untuk header/footer) -->
+    <!-- CSS Global -->
     <link rel="stylesheet" href="style.css" />
-    
-    <!-- Panggil CSS Khusus Halaman Ini -->
+
+    <!-- CSS Tracking -->
     <link rel="stylesheet" href="tracking.css" />
-    
+
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <!-- Header (dari style.css) -->
+    <!-- Header -->
     <header class="header">
         <nav class="navbar">
             <a href="index.html" class="logo">WASHLABS.<span>LIVE</span></a>
@@ -30,109 +30,121 @@
         </nav>
     </header>
 
-    <!-- Konten Utama (dari tracking.css) -->
+    <!-- Konten Utama -->
     <section class="section">
         <div class="container">
             <h2 class="section-title">📋 Daftar Antrian</h2>
             <p class="section-subtitle">Pantau status pengerjaan secara real-time. Data diperbarui otomatis.</p>
 
-            <!-- Tabel Antrian -->
+            <!-- Tabel -->
             <div class="queue-container">
-                <table class="queue-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nama Pelanggan</th>
-                            <th>Barang</th>
-                            <th>Status Pengerjaan</th>
-                        </tr>
-                    </thead>
-                    <tbody id="queueList">
-                        <!-- Data akan dimuat di sini oleh JavaScript -->
-                        <tr><td colspan="4" class="loading-text">Sedang memuat data antrian... ⏳</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <p style="margin-top: 20px; font-size: 0.9rem; color: var(--gray); text-align: center;">
-                * Halaman akan diperbarui otomatis setiap 15 detik.
-            </p>
-        </div>
+                <!-- Tabel -->
+<div class="queue-container">
+    <table class="queue-table">
+        <thead>
+            <tr>
+                <th>Nama </th>
+                <th>Barang</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="queueList">
+            <tr>
+                <td colspan="3" class="loading-text">
+                    Sedang memuat data... ⏳
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<p style="margin-top:20px; font-size:0.9rem; color:var(--gray); text-align:center;">
+    * Halaman diperbarui otomatis setiap 15 detik.
+</p>
     </section>
 
-    <!-- Footer (dari style.css) -->
+    <!-- Footer -->
     <footer class="footer">
         <p>© 2025 WashLabs.indonesia</p>
     </footer>
 
-    <!-- Script JS -->
+    <!-- SCRIPT TRACKING -->
     <script src="script.js"></script>
-    
-    <script>
-        // Script ini TIDAK PERLU diubah, sudah sesuai
-        document.addEventListener('DOMContentLoaded', async () => {
-            const _supabase = window.supabaseClient;
-            const tbody = document.getElementById('queueList');
 
-            if (!_supabase) {
-                tbody.innerHTML = '<tr><td colspan="4" class="loading-text" style="color:#ef4444;">Gagal terhubung ke Database.</td></tr>';
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const db = window.supabaseClient; 
+    const tbody = document.getElementById('queueList');
+
+    if (!db) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="3" class="loading-text" style="color:#ef4444;">
+                    Gagal terhubung ke database.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    async function fetchQueue() {
+        try {
+            const { data, error } = await db
+                .from('orders')
+                .select('nama, barang, jumlah, status')
+                .order('id', { ascending: false });
+
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="loading-text">
+                            Belum ada antrian saat ini.
+                        </td>
+                    </tr>
+                `;
                 return;
             }
 
-            async function fetchQueue() {
-                try {
-                    const { data, error } = await _supabase
-                        .from('orders')
-                        .select('id, nama, barang, status') 
-                        .order('create_at', { ascending: false })
-                        .limit(50);
+            tbody.innerHTML = data.map(item => {
+                let badgeClass = "status-antri";
+                let icon = "⏳";
 
-                    if (error) throw error;
-
-                    if (!data || data.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="4" class="loading-text">Belum ada antrian saat ini.</td></tr>';
-                        return;
-                    }
-
-                    tbody.innerHTML = data.map(item => {
-                        let badgeClass = 'status-antri';
-                        let icon = '⏳';
-                        
-                        if (item.status === 'Sedang Dicuci') {
-                            badgeClass = 'status-cuci';
-                            icon = '🫧';
-                        } else if (item.status === 'Selesai') {
-                            badgeClass = 'status-selesai';
-                            icon = '✅';
-                        }
-
-                        // --- PERUBAHAN DI SINI ---
-                        // const safeName = item.nama.substring(0, 2) + "***"; // Dihapus
-                        const fullName = item.nama; // Diganti
-
-                        return `
-                            <tr>
-                                <td style="font-family: monospace; font-weight:bold;">#${item.id}</td>
-                                <td style="font-weight: 500;">${fullName}</td> <!-- Menggunakan nama lengkap -->
-                                <td>${item.barang}</td>
-                                <td>
-                                    <span class="badge ${badgeClass}">
-                                        ${icon} ${item.status}
-                                    </span>
-                                </td>
-                            </tr>
-                        `;
-                    }).join('');
-
-                } catch (err) {
-                    console.error(err);
-                    tbody.innerHTML = `<tr><td colspan="4" class="loading-text" style="color:#ef4444;">Gagal memuat data.</td></tr>`;
+                if (item.status === "Sedang Dicuci") {
+                    badgeClass = "status-cuci";
+                    icon = "🫧";
+                } else if (item.status === "Selesai") {
+                    badgeClass = "status-selesai";
+                    icon = "✅";
                 }
-            }
 
-            fetchQueue();
-            setInterval(fetchQueue, 15000); // Auto-refresh
-        });
-    </script>
-</body>
-</html>a
+                return `
+                    <tr>
+                        <td style="font-weight:500;">${item.nama}</td>
+                        <td>${item.barang} (${item.jumlah})</td>
+                        <td>
+                            <span class="badge ${badgeClass}">
+                                ${icon} ${item.status}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+
+        } catch (err) {
+            console.error(err);
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="3" class="loading-text" style="color:#ef4444;">
+                        Terjadi kesalahan saat memuat data.
+                    </td>
+                </tr>
+            `;
+        }
+    }
+
+    fetchQueue();
+    setInterval(fetchQueue, 15000);
+});
+</script>
