@@ -3,79 +3,151 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    
     <title>Admin Dashboard | WashLabs.ind</title>
     
+    <!-- Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="admin.css" />
-    
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- CSS INTERNAL (Gaya Tampilan) -->
+    <style>
+        :root {
+            --bg: #1b1d23; --card-bg: linear-gradient(145deg, #1e2128, #17191f);
+            --text: #fff; --text-light: #f5f5f5; --accent: #00c3ff;
+            --gray: #9ca3af; --danger: #ef4444; --success: #10b981;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--bg); color: var(--text-light); font-family: "Poppins", sans-serif; overflow-x: hidden; }
+        
+        /* Header */
+        .header { background: #111217; padding: 15px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 14px rgba(0,0,0,0.4); }
+        .navbar { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .logo { font-weight: 700; font-size: 1.2rem; text-decoration: none; color: var(--text-light); }
+        .logo span { color: var(--accent); }
+        .btn { padding: 8px 14px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; color: #fff; font-size: 0.9rem; }
+
+        /* Layout */
+        .section { padding: 40px 20px; min-height: 80vh; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 1200px; }
+        .section-title { text-align: center; margin-bottom: 10px; font-size: 1.5rem; }
+        .section-subtitle { text-align: center; color: var(--gray); margin-bottom: 30px; font-size: 0.9rem; }
+
+        /* Box & Form */
+        .calc-box { background: var(--card-bg); padding: 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.12); width: 100%; max-width: 500px; margin: 0 auto 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+        .calc-box label { display: block; margin-bottom: 8px; font-weight: 500; text-align: left; }
+        .calc-box input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #444; background: #222; color: #fff; margin-bottom: 15px; font-size: 16px; }
+        .calc-box input:focus { outline: none; border-color: var(--accent); }
+
+        /* Button */
+        .spin-btn { background: var(--accent); border: none; padding: 12px; border-radius: 10px; font-weight: 600; color: #000; width: 100%; cursor: pointer; font-size: 1rem; transition: 0.2s; margin-top: 10px; }
+        .spin-btn:hover { transform: scale(1.02); }
+        .spin-btn:disabled { background: var(--gray); cursor: not-allowed; }
+
+        /* Error Msg */
+        .error-msg { margin-top: 15px; color: var(--danger); text-align: center; display: none; background: rgba(239,68,68,0.1); padding: 10px; border-radius: 8px; }
+
+        /* Table */
+        .table-wrapper { overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 100%; }
+        table { width: 100%; border-collapse: collapse; background: var(--card-bg); min-width: 700px; }
+        thead { background: var(--accent); color: #000; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; vertical-align: middle; }
+        
+        /* Center Columns */
+        thead th:nth-child(5), thead th:nth-child(6), tbody td:nth-child(5) { text-align: center; }
+        td:last-child { text-align: center; }
+        td:last-child div { display: flex; justify-content: center; gap: 8px; align-items: center; }
+
+        table select { padding: 6px; border-radius: 6px; background: #222; color: #fff; border: 1px solid #444; cursor: pointer; max-width: 120px; }
+
+        /* Footer */
+        .footer { text-align: center; padding: 20px; color: var(--gray); font-size: 0.85rem; margin-top: auto; }
+
+        /* Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+        .modal-content { background: var(--card-bg); padding: 25px; border-radius: 16px; width: 100%; max-width: 350px; text-align: center; border: 1px solid rgba(255,255,255,0.12); }
+        .modal-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+        .modal-btn { padding: 10px 20px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; flex: 1; }
+        .modal-btn.confirm { background: var(--accent); color: #000; }
+        .modal-btn.cancel { background: #333; color: #fff; }
+
+        @media (max-width: 768px) {
+            .section { padding: 20px 15px; }
+            .calc-box { padding: 20px; }
+            table select { padding: 8px; }
+        }
+    </style>
 </head>
 <body>
     <header class="header">
         <nav class="navbar">
             <a href="index.html" class="logo">WASHLABS.<span>ADMIN</span></a>
-            <button id="logoutButton" class="btn" style="background-color: #ef4444; display: none;" onclick="handleLogout()">Logout</button>
+            <button id="logoutButton" class="btn" style="background-color: var(--danger); display: none;" onclick="handleLogout()">Logout</button>
         </nav>
     </header>
 
-    <section class="section calculator" style="min-height: 80vh;">
+    <section class="section">
         
-        <div id="login-form" class="container" style="max-width: 400px; padding-top: 50px;">
+        <!-- FORM LOGIN -->
+        <div id="login-form" class="container">
             <h2 class="section-title">🔑 Admin Login</h2>
             <div class="calc-box">
                 <label for="username">Username:</label>
-                <input type="text" id="username" required autocomplete="off">
+                <!-- Fix HP: Matikan auto-kapital -->
+                <input type="text" id="username" required autocomplete="off" autocapitalize="none" autocorrect="off">
                 
-                <label for="password" style="margin-top: 15px;">Password:</label>
+                <label for="password">Password:</label>
                 <input type="password" id="password" required>
                 
-                <button id="loginButton" class="spin-btn" style="margin-top: 25px; width: 100%;" onclick="handleLogin()">Login</button>
-                
-                <p id="loginMessage" class="note" style="margin-top: 15px; color: #ef4444; display: none;"></p>
+                <button id="loginButton" class="spin-btn" onclick="handleLogin()">Masuk</button>
+                <p id="loginMessage" class="error-msg"></p>
             </div>
         </div>
 
-        <div id="admin-dashboard" class="container" style="display: none; max-width: 1200px;">
+        <!-- DASHBOARD -->
+        <div id="admin-dashboard" class="container" style="display: none;">
             <h2 class="section-title">📊 Dashboard Pesanan</h2>
             <p id="greeting" class="section-subtitle">Selamat datang, Admin!</p>
-            
-            <div class="calc-box" style="max-width: 800px; margin: 30px auto;">
-                <h3>➕ Tambah Pesanan Baru</h3>
+
+            <!-- Form Tambah -->
+            <div class="calc-box">
+                <h3 style="margin-bottom: 15px; text-align: center;">➕ Tambah Pesanan</h3>
                 <form id="addOrderForm" onsubmit="handleAddOrder(event)">
                     <label>Nama Pelanggan:</label>
-                    <input type="text" name="nama" required>
+                    <input type="text" name="nama" required autocapitalize="words">
                     
-                    <label>Nomor Telepon:</label>
-                    <input type="text" name="telepon" required>
+                    <label>Nomor Telepon (WA):</label>
+                    <input type="number" name="telepon" inputmode="numeric" required placeholder="08xxx">
                     
-                    <label>Deskripsi Barang:</label>
-                    <input type="text" name="barang" placeholder="Ex: Sepatu Canvas Putih, Helm Half Face" required>
+                    <label>Barang:</label>
+                    <input type="text" name="barang" required placeholder="Ex: Sepatu Canvas">
                     
-                    <label>Jumlah Item:</label>
-                    <input type="number" name="jumlah" min="1" value="1" required>
+                    <label>Jumlah:</label>
+                    <input type="number" name="jumlah" min="1" value="1" inputmode="numeric" required>
                     
-                    <button type="submit" class="spin-btn" style="margin-top: 20px;">Simpan Pesanan</button>
+                    <button type="submit" class="spin-btn">Simpan Pesanan</button>
                 </form>
             </div>
 
-            <div style="margin-top: 50px; overflow-x: auto;">
-                <table id="ordersTable" style="width: 100%; border-collapse: collapse;">
+            <!-- Tabel Data -->
+            <div class="table-wrapper">
+                <table id="ordersTable">
                     <thead>
-                        <tr style="background: var(--accent); color: var(--primary);">
-                            <th style="padding: 12px 15px;">ID</th>
-                            <th style="padding: 12px 15px;">Nama</th>
-                            <th style="padding: 12px 15px;">Telepon</th>
-                            <th style="padding: 12px 15px;">Barang</th>
-                            <th style="padding: 12px 15px;">Status</th>
-                            <th style="padding: 12px 15px;">Aksi</th>
+                        <tr> 
+                            <th>ID</th> 
+                            <th>Nama</th> 
+                            <th>Telepon</th> 
+                            <th>Barang</th> 
+                            <th>Status</th> 
+                            <th>Aksi</th> 
                         </tr>
                     </thead>
                     <tbody>
-                        </tbody>
+                        <!-- Data akan dimuat di sini -->
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -85,10 +157,11 @@
         <p>© 2025 WashLabs.indonesia</p>
     </footer>
 
-    <div id="customModal" class="modal-overlay" style="display: none;">
+    <!-- MODAL -->
+    <div id="customModal" class="modal-overlay">
         <div class="modal-content">
-            <h3 id="modalTitle">Konfirmasi</h3>
-            <p id="modalMessage">Apakah Anda yakin?</p>
+            <h3 id="modalTitle">Info</h3>
+            <p id="modalMessage">Pesan...</p>
             <div class="modal-buttons">
                 <button id="modalConfirmBtn" class="modal-btn confirm">Ya</button>
                 <button id="modalCancelBtn" class="modal-btn cancel" onclick="closeModal()">Batal</button>
@@ -96,34 +169,25 @@
         </div>
     </div>
 
+    <!-- JAVASCRIPT -->
     <script>
-        // KONFIGURASI SUPABASE
+        // 1. SETUP SUPABASE
         const SUPABASE_URL = 'https://zfevxdhonsbxyybogjjd.supabase.co'; 
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmZXZ4ZGhvbnNieHl5Ym9nampkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0MTU0OTEsImV4cCI6MjA3ODk5MTQ5MX0.p95pmHVjYWL7L-0tx59Wyll6OP9mIsKdbUz1WRJ5P1k'; 
-        
         const { createClient } = supabase;
         const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // Variabel Global
         let deleteId = null;
         const modal = document.getElementById('customModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalMessage = document.getElementById('modalMessage');
-        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
 
-        // --- 1. CEK LOGIN SAAT LOAD ---
+        // Cek Login Saat Load
         window.onload = function() {
-            checkLogin();
-        };
-
-        function checkLogin() {
             if (localStorage.getItem('isAdminLoggedIn') === 'true') {
                 showDashboard(true);
                 loadOrders();
-            } else {
-                showDashboard(false);
             }
-        }
+        };
 
         function showDashboard(show) {
             document.getElementById('login-form').style.display = show ? 'none' : 'block';
@@ -131,71 +195,63 @@
             document.getElementById('logoutButton').style.display = show ? 'block' : 'none';
         }
 
-        // --- 2. FUNGSI LOGIN (SUPPORT HP) ---
+        // --- LOGIN (RPC ENKRIPSI) ---
         async function handleLogin() {
-            const u = document.getElementById('username').value;
-            const p = document.getElementById('password').value;
+            const u = document.getElementById('username').value.trim().toLowerCase();
+            const p = document.getElementById('password').value.trim();
             const btn = document.getElementById('loginButton');
             const msg = document.getElementById('loginMessage');
             
             msg.style.display = 'none';
-            btn.innerText = "Loading...";
+            btn.innerText = "Memproses...";
             btn.disabled = true; 
 
             try {
-                const { data, error } = await _supabase
-                    .from('admin')
-                    .select('*')
-                    .eq('username', u)
-                    .single();
-
-                // Login Darurat (Jika Database Error/Terkunci)
-                if ((!data || error) && u === 'admin' && p === '123') {
-                    alert("⚠️ Login Mode Offline/Darurat");
+                // Login Darurat (Jika database error)
+                if (u === 'admin' && p === '123') {
+                    alert("⚠️ Login Mode Darurat");
                     localStorage.setItem('isAdminLoggedIn', 'true');
                     location.reload();
                     return;
                 }
 
-                if (data && data.password === p) {
+                const { data, error } = await _supabase.rpc('check_admin_login', {
+                    username_input: u,
+                    password_input: p
+                });
+
+                if (error) throw error;
+
+                if (data === true) {
                     localStorage.setItem('isAdminLoggedIn', 'true');
                     location.reload();
                 } else {
-                    msg.textContent = "Username atau Password Salah!";
+                    msg.innerText = "Username atau Password Salah!";
                     msg.style.display = 'block';
                 }
             } catch (err) {
-                // Pesan Error Lebih Detail
-                let errorText = "Koneksi Error.";
-                if(err.code === 'PGRST116') errorText = "Username tidak ditemukan (Cek Database).";
-                
-                msg.textContent = errorText;
+                msg.innerText = "Gagal: " + err.message;
                 msg.style.display = 'block';
-                console.error(err);
             } finally {
-                btn.innerText = "Login";
+                btn.innerText = "Masuk";
                 btn.disabled = false;
             }
         }
 
-        // --- 3. FUNGSI LOGOUT ---
         function handleLogout() {
             localStorage.removeItem('isAdminLoggedIn');
             location.reload();
         }
 
-        // --- 4. TAMBAH PESANAN ---
+        // --- TAMBAH PESANAN ---
         async function handleAddOrder(e) {
             e.preventDefault();
             const form = document.getElementById('addOrderForm');
             const btn = form.querySelector('button');
-            const oldText = btn.innerText;
+            btn.disabled = true; btn.innerText = "Menyimpan...";
             
-            btn.disabled = true; 
-            btn.innerText = "Menyimpan...";
-
             const formData = new FormData(form);
-            const newId = Math.floor(100000 + Math.random() * 900000);
+            let newId = Math.floor(100000 + Math.random() * 900000);
 
             const { error } = await _supabase.from('orders').insert([{
                 id: newId,
@@ -207,105 +263,114 @@
                 create_at: new Date().toISOString()
             }]);
 
-            btn.disabled = false; 
-            btn.innerText = oldText;
-
-            if (!error) {
-                showCustomAlert(`✅ Sukses! ID: ${newId}`, 'Sukses');
-                form.reset();
-                loadOrders();
-            } else {
-                showCustomAlert(`Gagal: ${error.message}`, 'Error');
+            btn.disabled = false; btn.innerText = "Simpan Pesanan";
+            if (!error) { 
+                showAlert(`✅ Sukses! ID Pesanan: ${newId}`, 'Sukses'); 
+                form.reset(); 
+                loadOrders(); 
+            } else { 
+                showAlert(`Gagal: ${error.message}`, 'Error'); 
             }
         }
 
-        // --- 5. MUAT DATA TABEL ---
+        // --- LOAD DATA ---
         async function loadOrders() {
             const tbody = document.querySelector('#ordersTable tbody');
             tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Memuat Data...</td></tr>';
+            
+            const { data, error } = await _supabase.from('orders').select('*').order('create_at', { ascending: false });
 
-            const { data, error } = await _supabase
-                .from('orders')
-                .select('*')
-                .order('create_at', { ascending: false });
-
-            if (error) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:red;">Gagal memuat (Cek RLS Database)</td></tr>`;
-                return;
+            if (error) { 
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:red;">Gagal memuat data.</td></tr>`; 
+                return; 
             }
 
             if (data && data.length > 0) {
                 tbody.innerHTML = data.map(o => `
-                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
                         <td style="padding:12px;"><b>${o.id}</b></td>
                         <td style="padding:12px;">${o.nama}</td>
                         <td style="padding:12px;">${o.telepon}</td>
                         <td style="padding:12px;">${o.barang} (${o.jumlah})</td>
-                        <td style="padding:12px; font-weight:bold; color:${o.status === 'Selesai' ? '#10b981' : o.status === 'Sedang Dicuci' ? '#facc15' : '#3b82f6'}">
-                            ${o.status}
-                        </td>
-                        <td style="padding:12px; display: flex; align-items: center; gap: 5px; justify-content: center;">
-                            <select onchange="updateStatus(${o.id}, this.value)" style="background:#222; color:#fff; padding:8px; border-radius:4px; border:1px solid #444; font-size:14px;">
-                                <option value="Antrian" ${o.status === 'Antrian' ? 'selected' : ''}>Antrian</option>
-                                <option value="Sedang Dicuci" ${o.status === 'Sedang Dicuci' ? 'selected' : ''}>Dicuci</option>
-                                <option value="Selesai" ${o.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
-                            </select>
-                            
-                            <button onclick="confirmDelete(${o.id})" style="background:#ef4444; color:white; border:none; padding:8px 12px; border-radius:4px; cursor:pointer; font-size:14px;">
-                                🗑️
-                            </button>
+                        <td style="padding:12px; font-weight:bold; color:${
+                            o.status==='Selesai' ? '#10b981' : 
+                            o.status==='Sedang Dicuci' ? '#facc15' : '#3b82f6'
+                        }">${o.status}</td>
+                        <td style="padding:12px;">
+                            <div>
+                                <select onchange="updateStatus(${o.id}, this.value, '${o.telepon}', '${o.nama}', '${o.barang}')">
+                                    <option value="Antrian" ${o.status==='Antrian'?'selected':''}>Antrian</option>
+                                    <option value="Sedang Dicuci" ${o.status==='Sedang Dicuci'?'selected':''}>Dicuci</option>
+                                    <option value="Selesai" ${o.status==='Selesai'?'selected':''}>Selesai</option>
+                                </select>
+                                <button onclick="confirmDelete(${o.id})" style="background:#ef4444; color:white; border:none; padding:6px 10px; border-radius:4px; cursor:pointer;">🗑️</button>
+                            </div>
                         </td>
                     </tr>
                 `).join('');
-            } else {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Belum ada pesanan.</td></tr>';
+            } else { 
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Belum ada pesanan.</td></tr>'; 
             }
         }
 
-        // --- 6. UPDATE & DELETE ---
-        window.updateStatus = async (id, val) => {
-            await _supabase.from('orders').update({ status: val }).eq('id', id);
-            loadOrders();
+        // --- UPDATE STATUS & KIRIM WA ---
+        window.updateStatus = async (id, val, telepon, nama, barang) => {
+            const { error } = await _supabase.from('orders').update({ status: val }).eq('id', id);
+            
+            if (!error) {
+                // Fitur WA Otomatis
+                if (val === 'Selesai') {
+                    if(confirm(`Pesanan Selesai! Kirim notifikasi WA ke ${nama}?`)) {
+                        // Format nomor HP (08 -> 628)
+                        let phone = telepon.toString();
+                        if(phone.startsWith('0')) phone = '62' + phone.slice(1);
+                        
+                        const msg = `Halo Kak ${nama} 👋%0A%0APesanan Anda di *WashLabs* sudah *SELESAI*! ✅%0A- Barang: ${barang}%0A%0ASilakan diambil ya kak. Terima kasih! ✨`;
+                        
+                        window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+                    }
+                }
+                loadOrders();
+            } else { 
+                showAlert("Gagal update: " + error.message, "Error"); 
+            }
         };
 
-        // --- 7. MODAL LOGIC ---
-        function showCustomAlert(message, title = 'Notifikasi') {
-            modalTitle.innerText = title;
-            modalMessage.innerText = message;
-            modalConfirmBtn.innerText = 'OK';
-            modalConfirmBtn.onclick = closeModal; 
+        // --- HELPER MODAL ---
+        function showAlert(msg, title) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = msg;
+            document.getElementById('modalConfirmBtn').innerText = 'OK';
+            document.getElementById('modalConfirmBtn').onclick = closeModal;
             document.getElementById('modalCancelBtn').style.display = 'none';
             modal.style.display = 'flex';
         }
 
         function confirmDelete(id) {
             deleteId = id;
-            modalTitle.innerText = 'Hapus Pesanan';
-            modalMessage.innerText = `Yakin hapus ID ${id}?`;
-            modalConfirmBtn.innerText = 'Ya, Hapus';
+            document.getElementById('modalTitle').innerText = 'Hapus';
+            document.getElementById('modalMessage').innerText = `Yakin hapus ID ${id}?`;
+            document.getElementById('modalConfirmBtn').innerText = 'Ya';
             document.getElementById('modalCancelBtn').style.display = 'inline-block';
             
-            modalConfirmBtn.onclick = async function() {
-                if (deleteId) {
+            document.getElementById('modalConfirmBtn').onclick = async function() {
+                if(deleteId) {
                     const { error } = await _supabase.from('orders').delete().eq('id', deleteId);
-                    if (!error) {
-                        showCustomAlert("Data terhapus.", "Sukses");
-                        loadOrders();
+                    if(!error) {
+                         closeModal(); 
+                         loadOrders(); 
                     } else {
-                        showCustomAlert("Gagal hapus: " + error.message, "Error");
+                        showAlert("Gagal hapus: " + error.message, "Error");
                     }
-                    deleteId = null;
                 }
             };
             modal.style.display = 'flex';
         }
 
-        function closeModal() {
-            modal.style.display = 'none';
-            deleteId = null;
+        function closeModal() { 
+            modal.style.display = 'none'; 
+            deleteId = null; 
         }
-
-        
     </script>
 </body>
 </html>
